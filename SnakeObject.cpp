@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   GameObject.cpp                                     :+:      :+:    :+:   */
+/*   SnakeObject.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,14 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "GameObject.hpp"
+#include "SnakeObject.hpp"
 
-GameObject::GameObject(void)
+SnakeObject::SnakeObject(void)
 {
     return;
 }
 
-GameObject::GameObject(WINDOW * win, char ch)
+SnakeObject::SnakeObject(WINDOW * win, char ch)
 {
     this->_character = ch;
 	this->_alive = true;
@@ -30,13 +30,13 @@ GameObject::GameObject(WINDOW * win, char ch)
 	keypad(this->_curwin, true);
 }
 
-GameObject::GameObject(GameObject const & src)
+SnakeObject::SnakeObject(SnakeObject const & src)
 {
     *this = src;
     return;
 }
 
-GameObject& GameObject::operator=(GameObject const & rhs)
+SnakeObject& SnakeObject::operator=(SnakeObject const & rhs)
 {
     if (this != &rhs)
     {
@@ -50,12 +50,13 @@ GameObject& GameObject::operator=(GameObject const & rhs)
     return *this;
 }
 
-GameObject::~GameObject(void)
+SnakeObject::~SnakeObject(void)
 {
     return;
 }
 
-void	GameObject::mvup(void)
+/*// refactoring
+void	SnakeObject::mvfwd(void)
 {
 	mvwaddch(this->_curwin, this->_currLocation[1], this->_currLocation[0], ' ');
 	this->_currLocation[1]--;
@@ -63,7 +64,7 @@ void	GameObject::mvup(void)
 		this->_currLocation[1] = this->_yMax - 2;
 }
 
-void	GameObject::mvdown(void)
+/*void	SnakeObject::mvdown(void)
 {
 	mvwaddch(this->_curwin, this->_currLocation[1], this->_currLocation[0], ' ');
 	this->_currLocation[1]++;
@@ -71,7 +72,7 @@ void	GameObject::mvdown(void)
 		this->_currLocation[1] = 1;
 }
 
-void	GameObject::mvleft(void)
+void	SnakeObject::turnLeft(void)
 {
 	mvwaddch(this->_curwin, this->_currLocation[1], this->_currLocation[0], ' ');
 	this->_currLocation[0]--;
@@ -80,7 +81,7 @@ void	GameObject::mvleft(void)
 		this->_currLocation[0] = 1;
 }
 
-void	GameObject::mvright(void)
+void	SnakeObject::turnRight(void)
 {
 	mvwaddch(this->_curwin, this->_currLocation[1], this->_currLocation[0], ' ');
     
@@ -90,7 +91,138 @@ void	GameObject::mvright(void)
 		this->_currLocation[0] = this->_xMax - 2;
 }
 
-int GameObject::getmv(void)
+
+int SnakeObject::getInput(void)
+{
+	int	choice = wgetch(this->_curwin);
+	switch(choice)
+	{
+		case KEY_UP:
+			mvup();
+			break;
+		case KEY_DOWN:
+			mvdown();
+			break;
+		case KEY_LEFT:
+			mvleft();
+			break;
+		case KEY_RIGHT:
+			mvright();
+			break;
+		default:
+			break;
+	}
+	return (choice);
+}
+/*/
+
+void	SnakeObject::displaySnakeObject(void)
+{
+	mvwaddch(this->_curwin, this->_currLocation[1], this->_currLocation[0], this->_character);
+}
+
+int		SnakeObject::getLocation(char c) const
+{
+	if (c == 'x')
+    	return (this->_currLocation[0]);
+	else if (c == 'y')
+    	return (this->_currLocation[1]);
+	else
+		return (-1);
+}
+
+void    SnakeObject::setLocation(int xLoc, int yLoc)
+{
+	if (xLoc == -1)
+    	xLoc = this->_currLocation[0];
+	if (yLoc == -1)
+		yLoc = this->_currLocation[1];
+
+	this->_currLocation[0] = xLoc;	
+    this->_currLocation[1] = yLoc;
+}
+
+int     SnakeObject::getMax(char c) const
+{
+    return ((c == 'x' ? this->_xMax : (c == 'y') ? this->_yMax : -1));
+}
+
+void    SnakeObject::setMax(char c, int val)
+{
+    if (c == 'x')
+        this->_xMax = val;
+    else if (c == 'y')
+        this->_yMax = val;
+}
+
+WINDOW  *SnakeObject::getWindow() const
+{
+    return (this->_curwin);
+}
+
+void    SnakeObject::setWindow(WINDOW *win)
+{
+    this->_curwin = win;
+}
+
+/*bool	SnakeObject::isAlive(void) const
+{
+	return ((this->_alive ? true : false));
+}
+
+void	SnakeObject::setAlive(bool val)
+{
+	this->_alive = val;
+}*/
+
+char    SnakeObject::getCharacter(void) const
+{
+	return (this->_character);
+}
+
+void    SnakeObject::setCharacter(char c)
+{
+	if (c > '\0')
+		this->_character = c;
+}
+
+void	SnakeObject::mvfwd(void)
+{
+	if (this->direction == DIR_UP){
+		this->currLocation[1]--;  // move up screen
+	}
+	else if (this->direction == DIR_RIGHT){
+		this->currLocation[0]++;
+	}
+	else if (this->direction == DIR_DOWN){
+		this->currLocation[1]++;
+	}
+	else if (this->direction == DIR_LEFT){
+		this->currLocation[0]--;
+	}
+}
+
+void	SnakeObject::turnLeft(void)
+{
+	if (this->_direction == 1)
+	{
+		this->direction = 4;
+	}
+	else
+		this->direction--;
+}
+
+void	SnakeObject::turnRight(void)
+{
+	if (this->_direction == 4)
+	{
+		this->direction = 0;
+	}
+	else
+	this->direction++;
+}
+
+int SnakeObject::getInput(void)
 {
 	int	choice = wgetch(this->_curwin);
 	switch(choice)
@@ -113,72 +245,4 @@ int GameObject::getmv(void)
 	return (choice);
 }
 
-void	GameObject::displayGameObject(void)
-{
-	mvwaddch(this->_curwin, this->_currLocation[1], this->_currLocation[0], this->_character);
-}
 
-int		GameObject::getLocation(char c) const
-{
-	if (c == 'x')
-    	return (this->_currLocation[0]);
-	else if (c == 'y')
-    	return (this->_currLocation[1]);
-	else
-		return (-1);
-}
-
-void    GameObject::setLocation(int xLoc, int yLoc)
-{
-	if (xLoc == -1)
-    	xLoc = this->_currLocation[0];
-	if (yLoc == -1)
-		yLoc = this->_currLocation[1];
-
-	this->_currLocation[0] = xLoc;	
-    this->_currLocation[1] = yLoc;
-}
-
-int     GameObject::getMax(char c) const
-{
-    return ((c == 'x' ? this->_xMax : (c == 'y') ? this->_yMax : -1));
-}
-
-void    GameObject::setMax(char c, int val)
-{
-    if (c == 'x')
-        this->_xMax = val;
-    else if (c == 'y')
-        this->_yMax = val;
-}
-
-WINDOW  *GameObject::getWindow() const
-{
-    return (this->_curwin);
-}
-
-void    GameObject::setWindow(WINDOW *win)
-{
-    this->_curwin = win;
-}
-
-bool	GameObject::isAlive(void) const
-{
-	return ((this->_alive ? true : false));
-}
-
-void	GameObject::setAlive(bool val)
-{
-	this->_alive = val;
-}
-
-char    GameObject::getCharacter(void) const
-{
-	return (this->_character);
-}
-
-void    GameObject::setCharacter(char c)
-{
-	if (c > '\0')
-		this->_character = c;
-}

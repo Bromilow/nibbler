@@ -1,43 +1,36 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2017/05/23 08:55:42 by dmather           #+#    #+#              #
-#    Updated: 2017/05/28 09:15:26 by kbamping         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
+PROG		= nibbler
 
-NAME		= ft_retro
-NC			= \033[0m
-CR			= \033[31m
-CB			= \033[34m
-CP			= \033[38;5;128m
-CY			= \033[33m
-FLAGS		= -Wall -Wextra -Werror -lncurses -g3
+SRCS		= $(shell find -name "*.cpp")
 
-SRCS		=	main.cpp		\
-				Player.cpp		\
-				GameObject.cpp	\
-				Bullet.cpp		\
-				Entity.cpp
+OBJS		= $(SRCS:%.cpp=%.o)
 
-all: $(NAME)
+CXX			= clang++
 
-$(NAME):
-	@clang++ $(FLAGS) $(SRCS) -o $(NAME)
-#	@echo "$(CR)Terminal Broken!$(NC)"
-#	@sleep 2
-#	@echo "Just Kidding ;)"
-#	@sleep 1
-	@echo "$(CB)$(NAME) ==> Made '$(NAME)'$(NC)"
+CXXFLAGS	= -Wall -Wextra -Werror -g
+
+.PHONY: clean fclean re run
+
+all: $(PROG)
+
+%.o : %.cpp
+	@$(CXX) $(CXXFLAGS) -c $< -o $@
+	@echo "\033[01;36m$(PROG) -- \033[00;32m>>\033[0m $@"
+
+$(PROG): $(OBJS)
+	@$(CXX) $(CXXFLAGS) $(OBJS) -o $(PROG)
+	@echo "\033[01;36m$(PROG) -- \033[00;32mCOMPILED\033[0m"
 
 clean:
-	@rm -f $(NAME)
-	@echo "$(CR)$(NAME) ==> Removed '$(NAME)'$(NC)"
+	@rm -f $(OBJS)
+	@echo "\033[01;36m$(PROG) -- \033[00;32mREMOVED OBJECT FILES\033[0m"
 
 fclean: clean
+	@rm -f $(PROG)
+	@echo "\033[01;36m$(PROG) -- \033[00;32mREMOVED EXECUTABLE\033[0m"
 
-re: clean all
+re: fclean all
+
+run:
+	@rm -f $(PROG)
+	@echo "\033[01;36m$(PROG) -- \033[00;32mREMOVED EXECUTABLE\033[0m"
+	@$(MAKE) -s all
