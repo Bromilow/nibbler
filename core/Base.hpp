@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   SnakeObject.hpp                                     :+:      :+:    :+:   */
+/*   Base.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _SNAKE_OBJECT_HPP_
-# define _SNAKE_OBJECT_HPP_
+#ifndef _BASE_HPP_
+# define _BASE_HPP_
 
 # include <curses.h>
 # include <string>
@@ -26,30 +26,21 @@
 # define DIR_LEFT 4
 
 
-class SnakeObject {
+class Base {
 public:
-		SnakeObject(void);
-        SnakeObject(WINDOW * win, char ch);
-		SnakeObject(SnakeObject const & src);
-		SnakeObject& operator=(SnakeObject const & rhs);
-		~SnakeObject(void);
+		Base(void);
+        Base(WINDOW * win, char ch);
+		Base(Base const & src);
+		Base& operator=(Base const & rhs);
+		~Base(void);
 
-		
-
-		void	mvfwd(void);                            /
-		//void	mvdown(void);
-		void	turnLeft(void);
-		void	turnRight(void);
-		int		getInput(void);
-        void	displaySnakeObject(void);
+        void	displayObject(void);
         int     getLocation(char c) const;
         void    setLocation(int xLoc, int yLoc);
         int     getMax(char c) const;
         void    setMax(char c, int val);
         WINDOW  *getWindow() const;
         void    setWindow(WINDOW *win);
-        //bool	isAlive(void) const;
-        //void	setAlive(bool val);
         char    getCharacter(void) const;
         void    setCharacter(char c);
         
@@ -60,10 +51,7 @@ private:
         int     _yMax;
 		char	_character;
         WINDOW  *_curwin;
-        //bool    _alive;
-        //////
-        int     _direction;              // need to initialise 
 
 };
 
-#endif /* _SNAKE_OBJECT_HPP_ */
+#endif /* _BASE_HPP_ */
