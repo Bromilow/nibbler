@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Base.hpp                                     :+:      :+:    :+:   */
+/*   Base.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/05/27 14:53:27 by kbamping           #+#    #+#             */
-/*   Updated: 2017/05/27 21:34:10 by kbamping         ###   ########.fr       */
+/*   Created: 2017/05/27 14:53:27 by kbamping          #+#    #+#             */
+/*   Updated: 2017/06/08 13:39:10 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,7 @@
 
 # include <curses.h>
 # include <string>
-# include <cstdio>
 # include <cstdlib>
-# include <ctime>
-# include <iostream>
 
 # define DIR_UP 1
 # define DIR_RIGHT 2

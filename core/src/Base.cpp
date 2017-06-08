@@ -20,7 +20,7 @@ Base::Base(void)
 Base::Base(WINDOW * win, char ch)
 {
     this->_character = ch;
-	this->_alive = true;
+	this->_alive = true; 
     
 	this->setWindow(win);
     // Get terminal size
