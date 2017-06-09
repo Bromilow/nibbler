@@ -1,18 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ModNcurses.cpp                                     :+:      :+:    :+:   */
+/*   ModNCurses.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/09 00:41:48 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/09 03:02:26 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/09 14:31:17 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ModNcurses.hpp"
+#include "ModNCurses.hpp"
 
-ModNcurses::ModNCurses()
+// Class factories
+// Need to add type def for class factories --- http://www.tldp.org/HOWTO/C++-dlopen/thesolution.html#AEN216
+IModule* create_module(void) 
+{
+	return new ModNCurses();
+}
+
+void destroy_module(IModule* p)
+{
+	delete p;
+}
+
+ModNCurses::ModNCurses()
 {
 	initscr();
 	noecho();
@@ -39,18 +51,18 @@ ModNcurses::ModNCurses()
 	refresh();
 }
 
-ModNcurses::~ModNCurses()
+ModNCurses::~ModNCurses()
 {
 	delwin(this->_gameWindow);
 	delwin(this->_infoWindow);
 }
 
-ModNcurses::ModNCurses(const ModNCurses & src)
+ModNCurses::ModNCurses(const ModNCurses & src)
 {
 	*this = src;
 }
 
-ModNCurses & ModNcurses::operator=(const ModNCurses & rhs)
+ModNCurses & ModNCurses::operator=(const ModNCurses & rhs)
 {
 	this->_gameWindow = rhs._gameWindow;
 	this->_infoWindow = rhs._infoWindow;
@@ -58,20 +70,8 @@ ModNCurses & ModNcurses::operator=(const ModNCurses & rhs)
 	return (*this);
 }
 
-// Class factories
-// Need to add type def for class factories --- http://www.tldp.org/HOWTO/C++-dlopen/thesolution.html#AEN216
-extern "C" IModule* create_module()
-{
-    return new ModNCurses;
-}
-
-extern "C" void destroy_module(IModule* p)
-{
-    delete p;
-}
-
 // Member functions
-int     ModNcurses::getInput(void)
+int     ModNCurses::getInput(void)
 {
     int	choice = wgetch(this->_gameWindow);
 
@@ -96,8 +96,8 @@ int     ModNcurses::getInput(void)
 	return (choice);
 }
 
-int		ModNcurses::updateDisplay(void)
+int		ModNCurses::updateDisplay(void)
 {
-	std::cout << "ModNcurses::updateDisplay()" << std::endl;
+	std::cout << "ModNCurses::updateDisplay()" << std::endl;
 	return (1);
 }

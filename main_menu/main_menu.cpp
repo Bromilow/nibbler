@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 21:48:01 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/09 02:52:31 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/09 14:47:33 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ extern "C" int main_menu() {
             case KEY_UP:
                 highlight--;
                 if (highlight == -1)
-                    highlight = 1;
+                    highlight = menu_length - 1;
                 break;
             case KEY_DOWN:
                 highlight++;

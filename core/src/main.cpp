@@ -1,18 +1,16 @@
-#include <string>
-#include <cstdlib>
-#include <iostream>
-#include <dlfcn.h>
-#include "GameLoop.hpp"
-#include "IModule/IModule.hpp"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/06/09 12:43:32 by kbam7             #+#    #+#             */
+/*   Updated: 2017/06/09 14:46:24 by kbam7            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#define MIN_SCREEN_W    640
-#define MIN_SCREEN_H    480
-#define MAX_SCREEN_W    1280
-#define MAX_SCREEN_H    960
-
-int     main_menu(void);
-int     initialize_module(int option, IModule *module);
-int     delete_module(int option, IModule *module)
+#include "nibbler.hpp"
 
 int     main(int argc, char **argv)
 {
@@ -34,24 +32,27 @@ int     main(int argc, char **argv)
     else
     {
         int     game_choice;
-        IModule *module;
 
         game_choice = main_menu();
 
         std::cout << "You chose option : " << game_choice << std::endl;
 
-        initialize_module(game_choice, module);
+        if (game_choice > 0 && game_choice < 4)
+        {
+            IModule *module = NULL;
+            if (initialize_module(game_choice, module))
+            {
+                // Create a snake object
+                // Create food object and any obstacles
 
-        // Create a snake object
-        // Create food object and any obstacles
+                gameLoop(module);
 
-        gameLoop(module);
+                // Delete module
+                delete_module(game_choice, module);
 
-        // Delete module
-        delete_module(game_choice, module);
-
+            }
+        }
     }
-
     return (0);
 }
 
@@ -60,7 +61,7 @@ int     main_menu(void)
     int     menu_choice = 0;
 
     // open the library
-    void* handle = dlopen("./main_menu.so", RTLD_LAZY);
+    void* handle = dlopen("./mod_MainMenu.so", RTLD_NOW);
     
     if (!handle) {
         std::cerr << "Cannot open library: " << dlerror() << '\n';
@@ -73,7 +74,7 @@ int     main_menu(void)
     // reset errors
     dlerror();
 
-    main_menu_t menu = (main_menu_t) dlsym(handle, "main_menu");
+    main_menu_t menu = reinterpret_cast<main_menu_t>(dlsym(handle, "main_menu"));
 
     const char *dlsym_error = dlerror();
     if (dlsym_error) {
@@ -93,10 +94,10 @@ int     main_menu(void)
 
 int     initialize_module(int option, IModule *module)
 {
-    std::string modules[3] = {"./ModNCurses.so", "./ModOpenGL.so", "./ModSDL.so"};
+    std::string modules[3] = {"./mod_NCurses.so", "./mod_OpenGL.so", "./mod_SDL.so"};
 
     // open the library
-    void* handle = dlopen(modules[option], RTLD_LAZY);
+    void* handle = dlopen(modules[option - 1].c_str(), RTLD_NOW);
     
     if (!handle) {
         std::cerr << "Cannot open library: " << dlerror() << '\n';
@@ -106,7 +107,7 @@ int     initialize_module(int option, IModule *module)
     dlerror();
 
     // load the 'create_module' symbol
-    createModule_t *create_module = (createModule_t *) dlsym(handle, "create_module");
+    createModule_t create_module = reinterpret_cast<createModule_t>(dlsym(handle, "create_module"));
     const char *dlsym_error = dlerror();
     if (dlsym_error) {
         std::cerr << "Cannot load symbol 'create_module': " << dlsym_error << '\n';
@@ -124,10 +125,10 @@ int     initialize_module(int option, IModule *module)
 
 int     delete_module(int option, IModule *module)
 {
-    std::string modules[3] = {"./ModNCurses.so", "./ModOpenGL.so", "./ModSDL.so"};
+    std::string modules[3] = {"./mod_NCurses.so", "./mod_OpenGL.so", "./mod_SDL.so"};
 
     // open the library
-    void* handle = dlopen(modules[option], RTLD_LAZY);
+    void* handle = dlopen(modules[option - 1].c_str(), RTLD_NOW);
     
     if (!handle) {
         std::cerr << "Cannot open library: " << dlerror() << '\n';
@@ -137,7 +138,7 @@ int     delete_module(int option, IModule *module)
     dlerror();
 
     // load the 'destroy_module' symbol
-    destroyModule_t *destroy_module = (destroyModule_t *) dlsym(handle, "destroy_module");
+    destroyModule_t destroy_module = reinterpret_cast<destroyModule_t>(dlsym(handle, "destroy_module"));
     const char *dlsym_error = dlerror();
     if (dlsym_error) {
         std::cerr << "Cannot load symbol 'destroy_module': " << dlsym_error << '\n';

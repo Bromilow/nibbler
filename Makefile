@@ -6,20 +6,20 @@
 #    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/09 03:17:50 by kbam7             #+#    #+#              #
-#    Updated: 2017/06/09 03:27:03 by kbam7            ###   ########.fr        #
+#    Updated: 2017/06/09 13:04:26 by kbam7            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 #-- Names of items to make
 PROG		= nibbler
-MOD_MENU	= main_menu.so
-MOD_NCRS	= ModNCurses.so
+MOD_MENU	= mod_MainMenu.so
+MOD_NCRS	= mod_NCurses.so
 
 #-- Core Program
 SRCS		= core/src/main.cpp core/src/GameLoop.cpp
 OBJS		= $(SRCS:%.cpp=%.o)
 
-#-- Main-menu Module
+#-- MainMenu Module
 MOD_MENU_SRCS	= main_menu/main_menu.cpp 
 MOD_MENU_OBJS	= $(MOD_MENU_SRCS:%.cpp=%.o)
 
@@ -50,22 +50,22 @@ $(PROG): $(OBJS)
 	@$(CXX) $(CXXFLAGS) $(OBJS) -ldl -o $(PROG)
 	@echo "\033[01;36m$(PROG) -- \033[00;32mCOMPILED\033[0m"
 
-#-- Main-menu Module
+#-- MainMenu Module
 main_menu/%.o : main_menu/%.cpp
-	@$(CXX) $(WFLAGS) -fpic -c $< -o $@
+	@$(CXX) $(WFLAGS) -fPIC -c $< -o $@
 	@echo "\033[01;36m$(MOD_MENU) -- \033[00;32m>>\033[0m $@"
 
 $(MOD_MENU): $(MOD_MENU_OBJS)
-	@$(CXX) -lncurses -shared -fpic -o $(MOD_MENU) $(MOD_MENU_OBJS)
+	@$(CXX) -lncurses -shared -o $(MOD_MENU) $(MOD_MENU_OBJS)
 	@echo "\033[01;36m$(MOD_MENU) -- \033[00;32mCOMPILED\033[0m"
 
 #-- NCurses Module
 module_1/%.o : module_1/%.cpp
-	@$(CXX) $(WFLAGS) -fpic -c $< -o $@
+	@$(CXX) $(CXXFLAGS) -fPIC -c $< -o $@
 	@echo "\033[01;36m$(MOD_NCRS) -- \033[00;32m>>\033[0m $@"
 
 $(MOD_NCRS): $(MOD_NCRS_OBJS)
-	@$(CXX) -lncurses -shared -fpic -o $(MOD_NCRS) $(MOD_NCRS_OBJS)
+	@$(CXX) $(CXXFLAGS) -lncurses -shared -o $(MOD_NCRS) $(MOD_NCRS_OBJS)
 	@echo "\033[01;36m$(MOD_NCRS) -- \033[00;32mCOMPILED\033[0m"
 
 #-- OpenGL Module
