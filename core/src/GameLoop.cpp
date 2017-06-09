@@ -6,13 +6,13 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 13:51:13 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/08 17:02:01 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/09 03:08:28 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GameLoop.hpp" // Add include path to Makefile
 
-int     gameLoop(void)
+int     gameLoop(IModule *module)
 {
     long            _oldNanoSec;
     time_t          _oldSec;
@@ -24,14 +24,16 @@ int     gameLoop(void)
     while (i < 5)
     {
         clock_gettime(CLOCK_REALTIME, &_timeNow);
-        if ((_timeNow.tv_nsec - _oldNanoSec) > 16666600)
+        if ((_timeNow.tv_nsec - _oldNanoSec) > 749997000) /*16666600*/ 
         {
             _oldNanoSec = _timeNow.tv_nsec;
             // Get input
+            module->getInput();
 
             // Update position and gamestate according to input (left, right, pause, exit, main menu)
 
             // Update display
+            module->updateDisplay();
         }
         if ((_timeNow.tv_sec - _oldSec) > 0)
         {
