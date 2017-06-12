@@ -6,93 +6,102 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/09 12:43:32 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/09 14:46:24 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/12 19:03:46 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "nibbler.hpp"
+#include "main.hpp"
 
 int     main(int argc, char **argv)
 {
-    if (argc != 3)
-    {
-        std::cout << "error : invlid arguments. Try this:\n"
-        << "make run   OR   ./nibbler width height\n" << std::endl;
-    }
-    else if (!(std::atoi(argv[1]) >= MIN_SCREEN_W && std::atoi(argv[2]) >= MIN_SCREEN_H))
-    {
-        // error : screen dimentions too small
-        std::cout << "error : screen dimentions too small" << std::endl;
-    }
-    else if (!(std::atoi(argv[1]) <= MAX_SCREEN_W && std::atoi(argv[2]) <= MAX_SCREEN_H))
-    {
-        // error : screen dimentions too large
-        std::cout << "error : screen dimentions too large" << std::endl;
-    }
-    else
-    {
-        int     game_choice;
+    if (!checkInput(argc, argv))
+        return (0);
+    else {
+        const char      *modules[3] = {"./module_1/mod_NCurses.so", "./module_2/mod_OpenGL.so", "./module_3/mod_SDL.so"};
+        int             menu_choice;
+        GameEnvironment *game;
 
-        game_choice = main_menu();
+        // Display menu
+        menu_choice = main_menu();
+        std::cout << "You chose option : " << menu_choice << std::endl;
 
-        std::cout << "You chose option : " << game_choice << std::endl;
-
-        if (game_choice > 0 && game_choice < 4)
+        if (menu_choice > 0 && menu_choice < 4)
         {
-            IModule *module = NULL;
-            if (initialize_module(game_choice, module))
-            {
-                // Create a snake object
-                // Create food object and any obstacles
-
-                gameLoop(module);
-
-                // Delete module
-                delete_module(game_choice, module);
-
-            }
+            // Set up player, map, and module handler
+            game = new GameEnvironment(std::atoi(argv[1]), std::atoi(argv[2]), modules[menu_choice - 1]);
+            game->moduleController->loadLibrary(modules[menu_choice - 1]);
+            game->gameLoop();
+            delete game;
+        } else {
+            // handle other menu options
         }
     }
     return (0);
 }
 
+int     checkInput(int ac, char **av)
+{
+    if (ac != 3)
+    {
+        std::cout << "error : invlid arguments. Try this:\n"
+        << "make run   OR   ./nibbler width height\n" << std::endl;
+        return (0);
+    }
+    else if (!(std::atoi(av[1]) || std::atoi(av[2])))
+    {
+        // error : screen width and height not valid
+        std::cout << "error : screen width and/or height not valid" << std::endl;
+        return (0);
+    }
+    else if (!(std::atoi(av[1]) >= MIN_SCREEN_W && std::atoi(av[2]) >= MIN_SCREEN_H))
+    {
+        // error : screen dimentions too small
+        std::cout << "error : screen dimentions too small" << std::endl;
+        return (0);
+    }
+    else if (!(std::atoi(av[1]) <= MAX_SCREEN_W && std::atoi(av[2]) <= MAX_SCREEN_H))
+    {
+        // error : screen dimentions too large
+        std::cout << "error : screen dimentions too large" << std::endl;
+        return (0);
+    }
+    else
+        return (1);
+}
+
 int     main_menu(void)
 {
-    int     menu_choice = 0;
+    typedef int (*main_menu_t)();
+    main_menu_t         menu_module;
+    const char          *dlsym_error;
+    int                 menu_choice;
 
     // open the library
-    void* handle = dlopen("./mod_MainMenu.so", RTLD_NOW);
-    
+    void* handle = dlopen("./main_menu/mod_MainMenu.so", RTLD_NOW);
     if (!handle) {
-        std::cerr << "Cannot open library: " << dlerror() << '\n';
-        return -1;
+        std::cerr << "Cannot open library: 'mod_MainMenu.so'\nERROR : " << dlerror() << '\n';
+        return (-1);
     }
-    
-    // load the symbol
-    typedef int (*main_menu_t)();
-
     // reset errors
     dlerror();
 
-    main_menu_t menu = reinterpret_cast<main_menu_t>(dlsym(handle, "main_menu"));
-
-    const char *dlsym_error = dlerror();
+    menu_module = reinterpret_cast<main_menu_t>(dlsym(handle, "main_menu"));
+    dlsym_error = dlerror();
     if (dlsym_error) {
-        std::cerr << "Cannot load symbol 'main_menu': " << dlsym_error <<
-            '\n';
+        std::cerr << "Cannot load symbol 'main_menu': " << dlsym_error << '\n';
         dlclose(handle);
-        return -1;
+        return (-1);
     }
     
-    menu_choice = menu();
-    
+    menu_choice = menu_module();
+
     // close the library
     dlclose(handle);
 
     return (menu_choice);
 }
 
-int     initialize_module(int option, IModule *module)
+/*int     initialize_module(int option, IModule *module)
 {
     std::string modules[3] = {"./mod_NCurses.so", "./mod_OpenGL.so", "./mod_SDL.so"};
 
@@ -152,4 +161,4 @@ int     delete_module(int option, IModule *module)
     dlclose(handle);
 
     return (1);
-}
+}*/

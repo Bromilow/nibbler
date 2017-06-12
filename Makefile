@@ -6,7 +6,7 @@
 #    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/09 03:17:50 by kbam7             #+#    #+#              #
-#    Updated: 2017/06/09 13:04:26 by kbam7            ###   ########.fr        #
+#    Updated: 2017/06/12 16:17:09 by kbam7            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,23 +16,15 @@ MOD_MENU	= mod_MainMenu.so
 MOD_NCRS	= mod_NCurses.so
 
 #-- Core Program
-SRCS		= core/src/main.cpp core/src/GameLoop.cpp
+SRCS		= core/src/main.cpp core/src/GameEnvironment.cpp core/src/ModuleController.cpp
 OBJS		= $(SRCS:%.cpp=%.o)
-
-#-- MainMenu Module
-MOD_MENU_SRCS	= main_menu/main_menu.cpp 
-MOD_MENU_OBJS	= $(MOD_MENU_SRCS:%.cpp=%.o)
-
-#-- NCurses Module
-MOD_NCRS_SRCS	= module_1/ModNCurses.cpp 
-MOD_NCRS_OBJS	= $(MOD_NCRS_SRCS:%.cpp=%.o)
 
 #-- OpenGL Module
 #-- SDL Module
 
 #-- Compiler, libs, flags
 INCLUDES	= -I core/include
-WFLAGS		= -Wall -Wextra -Werror -g
+WFLAGS		= -Wall -Wextra -Werror -g3 -std=c++11
 CXX			= clang++
 CXXFLAGS	= $(WFLAGS) $(INCLUDES)
 
@@ -51,22 +43,12 @@ $(PROG): $(OBJS)
 	@echo "\033[01;36m$(PROG) -- \033[00;32mCOMPILED\033[0m"
 
 #-- MainMenu Module
-main_menu/%.o : main_menu/%.cpp
-	@$(CXX) $(WFLAGS) -fPIC -c $< -o $@
-	@echo "\033[01;36m$(MOD_MENU) -- \033[00;32m>>\033[0m $@"
-
-$(MOD_MENU): $(MOD_MENU_OBJS)
-	@$(CXX) -lncurses -shared -o $(MOD_MENU) $(MOD_MENU_OBJS)
-	@echo "\033[01;36m$(MOD_MENU) -- \033[00;32mCOMPILED\033[0m"
+$(MOD_MENU) :
+	@$(MAKE) -s -C main_menu/
 
 #-- NCurses Module
-module_1/%.o : module_1/%.cpp
-	@$(CXX) $(CXXFLAGS) -fPIC -c $< -o $@
-	@echo "\033[01;36m$(MOD_NCRS) -- \033[00;32m>>\033[0m $@"
-
-$(MOD_NCRS): $(MOD_NCRS_OBJS)
-	@$(CXX) $(CXXFLAGS) -lncurses -shared -o $(MOD_NCRS) $(MOD_NCRS_OBJS)
-	@echo "\033[01;36m$(MOD_NCRS) -- \033[00;32mCOMPILED\033[0m"
+$(MOD_NCRS):
+	@$(MAKE) -s -C module_1/
 
 #-- OpenGL Module
 #-- SDL Module
@@ -74,19 +56,15 @@ $(MOD_NCRS): $(MOD_NCRS_OBJS)
 #-- General rules
 clean:
 	@rm -f $(OBJS)
-	@rm -f $(MOD_MENU_OBJS)
-	@rm -f $(MOD_NCRS_OBJS)
 	@echo "\033[01;36m$(PROG) -- \033[00;32mREMOVED OBJECT FILES\033[0m"
-	@echo "\033[01;36m$(MOD_MENU) -- \033[00;32mREMOVED OBJECT FILES\033[0m"
-	@echo "\033[01;36m$(MOD_NCRS) -- \033[00;32mREMOVED OBJECT FILES\033[0m"
+	@$(MAKE) -s -C main_menu/ clean
+	@$(MAKE) -s -C module_1/ clean
 
 fclean: clean
 	@rm -f $(PROG)
-	@rm -f $(MOD_MENU)
-	@rm -f $(MOD_NCRS)
 	@echo "\033[01;36m$(PROG) -- \033[00;32mREMOVED EXECUTABLE\033[0m"
-	@echo "\033[01;36m$(MOD_MENU) -- \033[00;32mREMOVED SHARED OBJECT\033[0m"
-	@echo "\033[01;36m$(MOD_NCRS) -- \033[00;32mREMOVED SHARED OBJECT\033[0m"
+	@$(MAKE) -s -C main_menu/ fclean
+	@$(MAKE) -s -C module_1/ fclean
 
 re: fclean all
 

@@ -6,29 +6,20 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 21:48:01 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/09 14:47:33 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/12 13:50:12 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <curses.h>
-#include <iostream>
+#include "main_menu.hpp"
 
-#define MENU_H  6
-#define MENU_W  10
-
-extern "C" int main_menu() {
-    std::cout << "main_menu()" << '\n';
+int main_menu(void) {
+    std::cout << "main_menu() " << '\n';
 
     initscr();
 	noecho();
 	cbreak();
 	curs_set(0);
 	nodelay(stdscr, true);
-
-    // NCURSES - OPTION 1 (default)
-                // Create new window (WINDOW *stdscr)
-                // Create bottom-bar for info (score, lives, highscore)
-                // Create map area (open square at first)
     
     int			choice;
 	int			highlight = 0;
