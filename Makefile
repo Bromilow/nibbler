@@ -6,17 +6,18 @@
 #    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/09 03:17:50 by kbam7             #+#    #+#              #
-#    Updated: 2017/06/12 16:17:09 by kbam7            ###   ########.fr        #
+#    Updated: 2017/06/15 19:45:06 by kbam7            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 #-- Names of items to make
 PROG		= nibbler
-MOD_MENU	= mod_MainMenu.so
-MOD_NCRS	= mod_NCurses.so
+MOD_MENU	= lib0_MainMenu.so
+MOD_NCRS	= lib1_NCurses.so
 
 #-- Core Program
-SRCS		= core/src/main.cpp core/src/GameEnvironment.cpp core/src/ModuleController.cpp
+CORE_SRC	= core/src
+SRCS		=	$(CORE_SRC)/main.cpp $(CORE_SRC)/Level.cpp $(CORE_SRC)/ModuleController.cpp $(CORE_SRC)/GameEnvironment.cpp
 OBJS		= $(SRCS:%.cpp=%.o)
 
 #-- OpenGL Module
@@ -31,16 +32,16 @@ CXXFLAGS	= $(WFLAGS) $(INCLUDES)
 .PHONY: clean fclean re run
 
 #-- RULES --#
-all: $(PROG) $(MOD_MENU) $(MOD_NCRS)
+all: $(MOD_NCRS) $(MOD_MENU) $(PROG)
 
 #-- Core Program
-core/src/%.o : core/src/%.cpp
+$(CORE_SRC)/%.o : $(CORE_SRC)/%.cpp
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
-	@echo "\033[01;36m$(PROG) -- \033[00;32m>>\033[0m $@"
+	@echo "\033[01;36m$(PROG) \t\t-- \033[00;32m>>\033[0m $@"
 
 $(PROG): $(OBJS)
 	@$(CXX) $(CXXFLAGS) $(OBJS) -ldl -o $(PROG)
-	@echo "\033[01;36m$(PROG) -- \033[00;32mCOMPILED\033[0m"
+	@echo "\033[01;36m$(PROG) \t\t-- \033[00;32mCOMPILED\033[0m\n"
 
 #-- MainMenu Module
 $(MOD_MENU) :
@@ -56,13 +57,11 @@ $(MOD_NCRS):
 #-- General rules
 clean:
 	@rm -f $(OBJS)
-	@echo "\033[01;36m$(PROG) -- \033[00;32mREMOVED OBJECT FILES\033[0m"
-	@$(MAKE) -s -C main_menu/ clean
-	@$(MAKE) -s -C module_1/ clean
+	@echo "\033[01;36m$(PROG) \t\t-- \033[00;32mREMOVED OBJECT FILES\033[0m"
 
 fclean: clean
 	@rm -f $(PROG)
-	@echo "\033[01;36m$(PROG) -- \033[00;32mREMOVED EXECUTABLE\033[0m"
+	@echo "\033[01;36m$(PROG) \t\t-- \033[00;32mREMOVED EXECUTABLE\033[0m\n"
 	@$(MAKE) -s -C main_menu/ fclean
 	@$(MAKE) -s -C module_1/ fclean
 
@@ -70,6 +69,7 @@ re: fclean all
 
 run:
 	@rm -f $(PROG)
-	@echo "\033[01;36m$(PROG) -- \033[00;32mREMOVED EXECUTABLE\033[0m"
+	@echo "\033[01;36m$(PROG) \t\t-- \033[00;32mREMOVED EXECUTABLE\033[0m\n"
 	@$(MAKE) -s all
-	./$(PROG) 640 480
+	./$(PROG) 17 30
+

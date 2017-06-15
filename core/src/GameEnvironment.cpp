@@ -6,23 +6,31 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/11 14:25:39 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/12 20:27:49 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/16 01:34:24 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <iostream>
+#include <ctime>
 #include "GameEnvironment.hpp"
+#include "ModuleController.hpp"
 
-GameEnvironment::GameEnvironment(void) : width(0), height(0)
+GameEnvironment::GameEnvironment(void)
 {
     //std::cout << "GameEnvironment::Default constructor" << std::endl; //debug
 }
 
-GameEnvironment::GameEnvironment(const int w, const int h, const char *filename) : width(w), height(h)
+GameEnvironment::GameEnvironment(const unsigned int w, const unsigned int h, const char *filename) : gameFPS(DEFAULT_GAME_FPS)
 {
+    // Set gameSpeed. Round to nearest 100th
+    this->gameSpeed = ((ONE_NANOSEC / this->gameFPS) / 100) * 100;
+
     //std::cout << "GameEnvironment::Parameterized constructor" << std::endl; //debug
     this->player = NULL;
-    this->levelData = NULL;
-    this->moduleController = new ModuleController(filename);
+    this->levelData = new Level(w, h);
+    
+    this->moduleController = new ModuleController(filename, *(this->levelData));
+    this->moduleController->loadLibrary(filename);
 }
 
 GameEnvironment::GameEnvironment(GameEnvironment const & src)
@@ -39,8 +47,8 @@ GameEnvironment & GameEnvironment::operator=(GameEnvironment const & rhs)
         this->player = rhs.player;
         this->levelData = rhs.levelData;
         this->moduleController = rhs.moduleController;
-        this->width = rhs.width;
-        this->height = rhs.height;
+        /*this->width = rhs.width;
+        this->height = rhs.height;*/
     }
     return (*this);
 }
@@ -66,19 +74,15 @@ int     GameEnvironment::gameLoop(void)
     struct timespec _timeNow;           // Holds current time values
 
     int i = 0;
-    while (i < 5)
+    while (i < 8)
     {
         clock_gettime(CLOCK_REALTIME, &_timeNow);
-        if ((_timeNow.tv_nsec - _oldNanoSec) > 6666600) // 16666600 / 2.8
+        if ((_timeNow.tv_nsec - _oldNanoSec) > 16666600 /*this->gameSpeed*/) // 16666600 * 60 == 1 sec 
         {
-            //std::cout << "GameEnvironment::gameLoop()::input time frame" << std::endl; //debug
+            _oldNanoSec = _timeNow.tv_nsec;
+
             // Get input
             this->moduleController->module->getInput();
-        }
-        if ((_timeNow.tv_nsec - _oldNanoSec) > 749997000) // 16666600 * 45 
-        {
-            //std::cout << "GameEnvironment::gameLoop()::update display : 60FPS" << std::endl; //debug
-            _oldNanoSec = _timeNow.tv_nsec;
 
             // Update position and gamestate according to input (left, right, pause, exit, main menu)
 
@@ -87,11 +91,9 @@ int     GameEnvironment::gameLoop(void)
         }
         if ((_timeNow.tv_sec - _oldSec) > 0)
         {
-            //std::cout << "GameEnvironment::gameLoop()::seconds" << std::endl; //debug
-            _oldSec  = _timeNow.tv_sec;
             ++i;
+            _oldSec  = _timeNow.tv_sec;
             _oldNanoSec = 0;
-            //std::cout << "Secs elapsed : " << i << std::endl; //debug
         }
     }
     return (0);

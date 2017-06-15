@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/09 12:43:32 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/12 19:03:46 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/15 13:31:18 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int     main(int argc, char **argv)
     if (!checkInput(argc, argv))
         return (0);
     else {
-        const char      *modules[3] = {"./module_1/mod_NCurses.so", "./module_2/mod_OpenGL.so", "./module_3/mod_SDL.so"};
+        const char      *modules[3] = {"./module_1/lib1_NCurses.so", "./module_2/lib2_OpenGL.so", "./module_3/lib3_SDL.so"};
         int             menu_choice;
         GameEnvironment *game;
 
@@ -29,9 +29,19 @@ int     main(int argc, char **argv)
         {
             // Set up player, map, and module handler
             game = new GameEnvironment(std::atoi(argv[1]), std::atoi(argv[2]), modules[menu_choice - 1]);
-            game->moduleController->loadLibrary(modules[menu_choice - 1]);
+            
+            // Initialize graphic library
+            //game->moduleController->loadLibrary(modules[menu_choice - 1]);
+
+            // Load game level
+            //game->moduleController->loadScene();
+
+            // Start game loop
             game->gameLoop();
+
+            // Game has ended
             delete game;
+            
         } else {
             // handle other menu options
         }
@@ -49,20 +59,20 @@ int     checkInput(int ac, char **av)
     }
     else if (!(std::atoi(av[1]) || std::atoi(av[2])))
     {
-        // error : screen width and height not valid
-        std::cout << "error : screen width and/or height not valid" << std::endl;
+        // error : map width and height not valid
+        std::cout << "error : map width and/or height not valid" << std::endl;
         return (0);
     }
-    else if (!(std::atoi(av[1]) >= MIN_SCREEN_W && std::atoi(av[2]) >= MIN_SCREEN_H))
+    else if (!(std::atoi(av[1]) >= MIN_MAP_W && std::atoi(av[2]) >= MIN_MAP_H))
     {
-        // error : screen dimentions too small
-        std::cout << "error : screen dimentions too small" << std::endl;
+        // error : map dimentions too small
+        std::cout << "error : map dimentions too small" << std::endl;
         return (0);
     }
-    else if (!(std::atoi(av[1]) <= MAX_SCREEN_W && std::atoi(av[2]) <= MAX_SCREEN_H))
+    else if (!(std::atoi(av[1]) <= MAX_MAP_W && std::atoi(av[2]) <= MAX_MAP_H))
     {
-        // error : screen dimentions too large
-        std::cout << "error : screen dimentions too large" << std::endl;
+        // error : map dimentions too large
+        std::cout << "error : map dimentions too large" << std::endl;
         return (0);
     }
     else
@@ -77,9 +87,9 @@ int     main_menu(void)
     int                 menu_choice;
 
     // open the library
-    void* handle = dlopen("./main_menu/mod_MainMenu.so", RTLD_NOW);
+    void* handle = dlopen("./main_menu/lib0_MainMenu.so", RTLD_NOW);
     if (!handle) {
-        std::cerr << "Cannot open library: 'mod_MainMenu.so'\nERROR : " << dlerror() << '\n';
+        std::cerr << "Cannot open library: 'lib0_MainMenu.so'\nERROR : " << dlerror() << '\n';
         return (-1);
     }
     // reset errors
@@ -100,65 +110,3 @@ int     main_menu(void)
 
     return (menu_choice);
 }
-
-/*int     initialize_module(int option, IModule *module)
-{
-    std::string modules[3] = {"./mod_NCurses.so", "./mod_OpenGL.so", "./mod_SDL.so"};
-
-    // open the library
-    void* handle = dlopen(modules[option - 1].c_str(), RTLD_NOW);
-    
-    if (!handle) {
-        std::cerr << "Cannot open library: " << dlerror() << '\n';
-        return 0;
-    }
-    // reset errors
-    dlerror();
-
-    // load the 'create_module' symbol
-    createModule_t create_module = reinterpret_cast<createModule_t>(dlsym(handle, "create_module"));
-    const char *dlsym_error = dlerror();
-    if (dlsym_error) {
-        std::cerr << "Cannot load symbol 'create_module': " << dlsym_error << '\n';
-        return 0;
-    }
-
-    // Create module
-    module = create_module();
-
-    // close the library
-    dlclose(handle);
-
-    return (1);
-}
-
-int     delete_module(int option, IModule *module)
-{
-    std::string modules[3] = {"./mod_NCurses.so", "./mod_OpenGL.so", "./mod_SDL.so"};
-
-    // open the library
-    void* handle = dlopen(modules[option - 1].c_str(), RTLD_NOW);
-    
-    if (!handle) {
-        std::cerr << "Cannot open library: " << dlerror() << '\n';
-        return 0;
-    }
-    // reset errors
-    dlerror();
-
-    // load the 'destroy_module' symbol
-    destroyModule_t destroy_module = reinterpret_cast<destroyModule_t>(dlsym(handle, "destroy_module"));
-    const char *dlsym_error = dlerror();
-    if (dlsym_error) {
-        std::cerr << "Cannot load symbol 'destroy_module': " << dlsym_error << '\n';
-        return 0;
-    }
-
-    // Create module
-    destroy_module(module);
-
-    // close the library
-    dlclose(handle);
-
-    return (1);
-}*/

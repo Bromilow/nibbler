@@ -6,22 +6,22 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/11 20:08:54 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/12 20:10:44 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/15 16:16:37 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ModuleController.hpp"
 
-IModule*    ModuleController::module = NULL;
+/*IModule*    ModuleController::module = NULL;*/
 
-ModuleController::ModuleController(const char *filename)
+ModuleController::ModuleController(const char *filename, Level & data) : levelData(data)
 {
     //std::cout << "ModuleController::Parameterized constructor" << std::endl;
     (void)filename;
     //this->loadLibrary(filename);
 }
 
-ModuleController::ModuleController(ModuleController const & src)
+ModuleController::ModuleController(ModuleController const & src) : levelData(src.levelData)
 {
     //std::cout << "ModuleController::Copy constructor" << std::endl;
     *this = src;
@@ -70,7 +70,7 @@ int     ModuleController::loadLibrary(const char *filename)
         if (this->_destroy_module != NULL)
         {
             // Create module
-            this->module = create_module();
+            this->module = create_module(this->levelData);
         }
     }
     return (1);

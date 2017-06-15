@@ -6,11 +6,11 @@
 #    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/09 03:17:50 by kbam7             #+#    #+#              #
-#    Updated: 2017/06/12 13:36:42 by kbam7            ###   ########.fr        #
+#    Updated: 2017/06/15 13:17:53 by kbam7            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-LIB			= mod_MainMenu.so
+LIB			= lib0_MainMenu.so
 
 SRCS		= main_menu.cpp 
 OBJS		= $(SRCS:%.cpp=%.o)
@@ -27,18 +27,18 @@ all: $(LIB)
 
 %.o : %.cpp
 	@$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-	@echo "\033[01;36m$(LIB) -- \033[00;32m>>\033[0m $@"
+	@echo "\033[01;36m$(LIB) \t-- \033[00;32m>>\033[0m $@"
 
 $(LIB): $(OBJS)
 	@$(CXX) $(LDFLAGS) -o $(LIB) $(OBJS)
-	@echo "\033[01;36m$(LIB) -- \033[00;32mCOMPILED\033[0m"
+	@echo "\033[01;36m$(LIB) \t-- \033[00;32mCOMPILED\033[0m\n"
 
 clean:
 	@rm -f $(OBJS)
-	@echo "\033[01;36m$(LIB) -- \033[00;32mREMOVED OBJECT FILES\033[0m"
+	@echo "\033[01;36m$(LIB) \t-- \033[00;32mREMOVED OBJECT FILES\033[0m"
 
 fclean: clean
 	@rm -f $(LIB)
-	@echo "\033[01;36m$(LIB) -- \033[00;32mREMOVED EXECUTABLE\033[0m"
+	@echo "\033[01;36m$(LIB) \t-- \033[00;32mREMOVED EXECUTABLE\033[0m\n"
 
 re: fclean all

@@ -20,7 +20,7 @@
 class Module : public IModule
 {
     public:
-        Module();
+        Module(Level & data);
         ~Module();
         Module(const Module & src);
         Module & operator=(const Module & rhs);
@@ -28,15 +28,19 @@ class Module : public IModule
         virtual int getInput(void);
         virtual int updateDisplay(void);
 
+        Level & levelData;
+
     private:
-        WINDOW *_gameWindow;
-        WINDOW *_infoWindow;
-        int     _terminal_W;
-        int     _terminal_H;
+        WINDOW          *_gameWindow;
+        WINDOW          *_infoWindow;
+        unsigned int    _terminal_W;
+        unsigned int    _terminal_H;
+        unsigned int    _padX;
+        unsigned int    _padY;
         
 };
 
-extern "C" IModule* create_module(void);
+extern "C" IModule* create_module(Level & data);
 extern "C" void     destroy_module(IModule* module);
 
 #endif /* MODULE_HPP */
