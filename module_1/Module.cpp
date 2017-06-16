@@ -30,20 +30,24 @@ Module::Module(Level & data) : levelData(data)
 
 	// Get max X and Y
 	getmaxyx(stdscr, this->_terminal_H, this->_terminal_W);
-	this->_padX =(this->_terminal_W - this->levelData.mapWidth) / 2;
-	this->_padY =(this->_terminal_H - this->levelData.mapHeight) / 2;
+
+	// Get padding to center map in terminal
+	this->_padX = (this->_terminal_W - this->levelData.mapWidth) / 2;
+	this->_padY = (this->_terminal_H - this->levelData.mapHeight) / 2;
 
 	// Game area
-	this->_gameWindow = newwin(this->_terminal_H - 2, this->_terminal_W, 0, 0);
-	box(this->_gameWindow, 0, 0);
+	this->_gameWindow = newwin(this->_terminal_H - INFO_WIN_H, this->_terminal_W, 0, 0);
+	/*box(this->_gameWindow, 0, 0);*/
 	nodelay(this->_gameWindow, true);
 	keypad(this->_gameWindow, true);
-	idlok(this->_gameWindow, true);
-	scrollok(this->_gameWindow, true);
+
+	// Scrolling in window
+	/*idlok(this->_gameWindow, true);
+	scrollok(this->_gameWindow, true);*/
 
 	// Info bar
-	this->_infoWindow = newwin(2, this->_terminal_W, this->_terminal_H - 2, 0);
-	box(this->_infoWindow, 0, 0);
+	this->_infoWindow = newwin(INFO_WIN_H, this->_terminal_W, this->_terminal_H - INFO_WIN_H, 0);
+	/*box(this->_infoWindow, 0, 0);*/
 	nodelay(this->_infoWindow, true);
 
 	wrefresh(this->_gameWindow);
@@ -108,8 +112,39 @@ int     Module::getInput(void)
 int		Module::updateDisplay(void)
 {
 	/*static unsigned int n = 0;*/
-	unsigned int 		x;
-	unsigned int 		y;
+	unsigned int 		x, y, newYMax, newXMax;
+
+	// Get terminal size
+	getmaxyx(stdscr, newYMax, newXMax);
+	if (newXMax <= this->levelData.mapWidth + 5 || newYMax <= this->levelData.mapHeight + 5)
+	{
+		wclear(stdscr);
+		wclear(this->_gameWindow);
+		wclear(this->_infoWindow);    
+		mvwprintw(this->_gameWindow, 1, 1, "Terminal too small!");
+		wrefresh(stdscr);
+		wrefresh(this->_gameWindow);
+		wrefresh(this->_infoWindow);
+		return (1);
+	}
+	else if (newXMax != this->_terminal_W || newYMax != this->_terminal_H)
+	{
+		// Resize and move gamewin
+		wresize(this->_gameWindow, newYMax - INFO_WIN_H, newXMax);
+		mvwin(this->_gameWindow, 0, 0);
+
+		// Resize and move infowin
+		wresize(this->_infoWindow, INFO_WIN_H, newXMax);
+		mvwin(this->_infoWindow, newYMax - INFO_WIN_H, 0);
+
+		// Update padding
+		this->_padX = (newXMax - this->levelData.mapWidth) / 2;
+		this->_padY = (newYMax - this->levelData.mapHeight) / 2;
+
+		// Update dimensions
+		this->_terminal_W = newXMax;
+		this->_terminal_H = newYMax;
+	}
 
 	wclear(this->_gameWindow);
 	wclear(this->_infoWindow);
@@ -144,11 +179,8 @@ int		Module::updateDisplay(void)
 	box(this->_infoWindow, 0, 0);
 
 	// Update virtual screen
-	wnoutrefresh(this->_gameWindow);
-	wnoutrefresh(this->_infoWindow);
-
-	// Update physical screen
-	doupdate();
+	wrefresh(this->_gameWindow);
+	wrefresh(this->_infoWindow);
 
 	return (1);
 }

@@ -6,7 +6,7 @@
 #    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/09 03:17:50 by kbam7             #+#    #+#              #
-#    Updated: 2017/06/15 13:29:24 by kbam7            ###   ########.fr        #
+#    Updated: 2017/06/16 12:22:58 by kbam7            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ OBJS		= $(SRCS:%.cpp=%.o)
 
 INCLUDES	= -I ../core/include
 CXX			= clang++
-CXXFLAGS	= -Wall -Wextra -Werror -std=c++11 -fPIC
+CXXFLAGS	= -Wall -Wextra -Werror -g3 -std=c++11 -fPIC
 LDFLAGS		= -shared -fPIC -lncurses
 
 .PHONY: clean fclean re

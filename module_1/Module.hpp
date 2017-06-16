@@ -17,6 +17,8 @@
 # include <iostream>
 # include "IModule.hpp"
 
+# define INFO_WIN_H 5
+
 class Module : public IModule
 {
     public:

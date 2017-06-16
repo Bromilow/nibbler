@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/13 20:15:03 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/15 17:19:43 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/16 17:25:29 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,21 +64,21 @@ Level::~Level(void)
         unsigned int i = 0;
         while (i < mapHeight)
         {
-            delete map[i];
+            delete[] map[i];
             map[i] = NULL;
             ++i;
         }
-        delete map;
+        delete[] map;
         map = NULL;
     }
 }
 
-unsigned int    Level::getMapWidth(void)
+unsigned int    Level::getMapWidth(void) const
 {
     return (this->mapWidth);
 }
 
-unsigned int    Level::getMapHeight(void)
+unsigned int    Level::getMapHeight(void) const
 {
     return (this->mapHeight);
 }

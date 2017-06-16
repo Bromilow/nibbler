@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/11 14:25:39 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/16 01:34:24 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/16 16:29:05 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,11 +69,15 @@ int     GameEnvironment::gameLoop(void)
     //std::cout << "GameEnvironment::gameLoop()" << std::endl;  //debug
     long            _oldNanoSec;
     time_t          _oldSec;
+    int             i;
  //   int             _gameStartTime;     // timestamp program started
 //    int             _sessionStartTime;  // timestamp when current game session started
     struct timespec _timeNow;           // Holds current time values
 
-    int i = 0;
+    clock_gettime(CLOCK_REALTIME, &_timeNow);
+    _oldNanoSec = _timeNow.tv_nsec;
+    _oldSec  = _timeNow.tv_sec;
+    i = 0;
     while (i < 8)
     {
         clock_gettime(CLOCK_REALTIME, &_timeNow);

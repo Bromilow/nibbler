@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/13 18:39:02 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/16 01:51:14 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/16 15:03:50 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ public:
     unsigned int    mapWidth;
     unsigned int    mapHeight;
 
-    unsigned int    getMapWidth(void);
-    unsigned int    getMapHeight(void);
+    unsigned int    getMapWidth(void) const;
+    unsigned int    getMapHeight(void) const;
     /*unsigned int    spawnFood();*/
 
     /*int loadNewMap(const unsigned int w, const unsigned int h);*/
