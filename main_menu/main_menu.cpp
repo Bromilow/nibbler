@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 21:48:01 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/16 16:24:20 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/16 20:50:39 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ int main_menu(void)
             yMax = newYMax;
         }
 
+        keypad(menuwin, true);  // Enable keypad
         wclear(stdscr);
         wclear(menuwin);
 

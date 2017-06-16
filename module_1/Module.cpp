@@ -14,6 +14,7 @@
 
 Module::Module(Level & data) : levelData(data)
 {
+	this->_oldSIGWINCH = signal(SIGWINCH, NULL);
 	//std::cout << "Module::Default constructor" << std::endl; //debug
 	this->_terminal_H = 0;
 	this->_terminal_W = 0;
@@ -62,6 +63,7 @@ Module::~Module()
 	delwin(this->_gameWindow);
 	delwin(this->_infoWindow);
 	endwin();
+	signal(SIGWINCH, this->_oldSIGWINCH);
 }
 
 Module::Module(const Module & src) : levelData(src.levelData)
@@ -116,7 +118,7 @@ int		Module::updateDisplay(void)
 
 	// Get terminal size
 	getmaxyx(stdscr, newYMax, newXMax);
-	if (newXMax <= this->levelData.mapWidth + 5 || newYMax <= this->levelData.mapHeight + 5)
+	if (newXMax <= this->levelData.mapWidth + 5 || newYMax <= this->levelData.mapHeight + 10)
 	{
 		wclear(stdscr);
 		wclear(this->_gameWindow);
@@ -179,8 +181,11 @@ int		Module::updateDisplay(void)
 	box(this->_infoWindow, 0, 0);
 
 	// Update virtual screen
-	wrefresh(this->_gameWindow);
-	wrefresh(this->_infoWindow);
+	wnoutrefresh(this->_gameWindow);
+	wnoutrefresh(this->_infoWindow);
+
+	// update physical screen
+	doupdate();
 
 	return (1);
 }
