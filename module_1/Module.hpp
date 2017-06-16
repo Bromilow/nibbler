@@ -15,6 +15,7 @@
 
 # include <curses.h>
 # include <iostream>
+# include <signal.h>
 # include "IModule.hpp"
 
 # define INFO_WIN_H 5
@@ -39,6 +40,7 @@ class Module : public IModule
         unsigned int    _terminal_H;
         unsigned int    _padX;
         unsigned int    _padY;
+        sighandler_t    _oldSIGWINCH;
         
 };
 
