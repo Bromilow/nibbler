@@ -22,13 +22,17 @@ GameEnvironment::GameEnvironment(void)
 
 GameEnvironment::GameEnvironment(const unsigned int w, const unsigned int h, const char *filename) : gameFPS(DEFAULT_GAME_FPS)
 {
-    // Set gameSpeed. Round to nearest 100th
+    const char *tmp[N_MODULES] = {"./module_1/lib1_NCurses.so", "./module_2/lib2_OpenGL.so", "./module_3/lib3_SDL.so"};
+    for (int i = 0; i < N_MODULES; ++i)
+        this->modulePaths[i] = tmp[i];
+
+    // Set gameSpeed. Round to nearest 100th (16666600 by default)
     this->gameSpeed = ((ONE_NANOSEC / this->gameFPS) / 100) * 100;
 
     //std::cout << "GameEnvironment::Parameterized constructor" << std::endl; //debug
     this->player = NULL;
     this->levelData = new Level(w, h);
-    
+
     this->moduleController = new ModuleController(filename, *(this->levelData));
     this->moduleController->loadLibrary(filename);
 }
@@ -66,37 +70,58 @@ GameEnvironment::~GameEnvironment(void)
 
 int     GameEnvironment::gameLoop(void)
 {
-    //std::cout << "GameEnvironment::gameLoop()" << std::endl;  //debug
     long            _oldNanoSec;
     time_t          _oldSec;
     int             i;
- //   int             _gameStartTime;     // timestamp program started
-//    int             _sessionStartTime;  // timestamp when current game session started
-    struct timespec _timeNow;           // Holds current time values
+    struct timespec timeNow;
+    t_input         action;
 
-    clock_gettime(CLOCK_REALTIME, &_timeNow);
-    _oldNanoSec = _timeNow.tv_nsec;
-    _oldSec  = _timeNow.tv_sec;
+    clock_gettime(CLOCK_REALTIME, &timeNow);
+    _oldNanoSec = timeNow.tv_nsec;
+    _oldSec  = timeNow.tv_sec;
     i = 0;
     while (i < 8)
     {
-        clock_gettime(CLOCK_REALTIME, &_timeNow);
-        if ((_timeNow.tv_nsec - _oldNanoSec) > 16666600 /*this->gameSpeed*/) // 16666600 * 60 == 1 sec 
+        clock_gettime(CLOCK_REALTIME, &timeNow);
+        if ((timeNow.tv_nsec - _oldNanoSec) > 16666600 /*this->gameSpeed*/) // 16666600 * 60 == 1 sec 
         {
-            _oldNanoSec = _timeNow.tv_nsec;
+            _oldNanoSec = timeNow.tv_nsec;
 
             // Get input
-            this->moduleController->module->getInput();
-
+            action = this->moduleController->module->getInput();
+            switch (action)
+            {
+                case UP:
+                    this->player->changeDirection(action);
+                case DOWN:
+                    this->player->changeDirection(action);
+                case LEFT:
+                    this->player->changeDirection(action);
+                case RIGHT:
+                    this->player->changeDirection(action);
+                case QUIT:
+                    return (0);
+                case PAUSE:
+                    this->levelData->paused = true;
+                case MOD1:
+                    this->loadNewModule();
+                case MOD2
+                    // load new module
+                case MOD3
+                    // load new module
+                case SUPACHOMP
+                    // do stuff
+            }
             // Update position and gamestate according to input (left, right, pause, exit, main menu)
+
 
             // Update display
             this->moduleController->module->updateDisplay();
         }
-        if ((_timeNow.tv_sec - _oldSec) > 0)
+        if ((timeNow.tv_sec - _oldSec) > 0)
         {
             ++i;
-            _oldSec  = _timeNow.tv_sec;
+            _oldSec  = timeNow.tv_sec;
             _oldNanoSec = 0;
         }
     }

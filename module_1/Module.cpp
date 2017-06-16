@@ -86,25 +86,32 @@ int     Module::getInput(void)
 {
 	//std::cout << "Module::getInput()" << std::endl; //debug
     int	choice = wgetch(this->_gameWindow);
+	t_input ret;
 
 	switch(choice)
 	{
 		case KEY_UP:
-			//std::cout << "KEY_UP" << std::endl;
-			wprintw(this->_infoWindow, "hello??");
-			break;
+			return UP;
 		case KEY_DOWN:
-			//std::cout << "KEY_DOWN" << std::endl;
-			break;
+			return DOWN;
 		case KEY_LEFT:
-			//std::cout << "KEY_LEFT" << std::endl;
-			break;
+			return LEFT;
 		case KEY_RIGHT:
-			//std::cout << "KEY_RIGHT" << std::endl;
-			break;
+			return RIGHT;
+		case 27:
+			return QUIT;
+		case 'p':
+			return PAUSE;
+		case '1':
+			return MOD1;
+		case '2':
+			return MOD2;
+		case '3':
+			return MOD3;
+		case ' ':
+			return SUPACHOMP;
 		default:
-			//std::cout << "KEY : " << choice << " : " << static_cast<char>(choice) << std::endl;
-			break;
+			return NONE;
 	}
 	return (choice);
 }
@@ -121,7 +128,7 @@ int		Module::updateDisplay(void)
 		wclear(stdscr);
 		wclear(this->_gameWindow);
 		wclear(this->_infoWindow);    
-		mvwprintw(this->_gameWindow, 1, 1, "Terminal too small!");
+		mvwprintw(this->_gameWindow, 1, 1, "Terminal too smwall!");
 		wrefresh(stdscr);
 		wrefresh(this->_gameWindow);
 		wrefresh(this->_infoWindow);

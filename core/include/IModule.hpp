@@ -16,6 +16,20 @@
 /*# include "GameEnvironment.hpp"*/
 # include "Level.hpp"
 
+typedef enum    e_input {
+    NONE = 0,
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+    QUIT,
+    PAUSE,
+    MOD1,
+    MOD2,
+    MOD3,
+    SUPACHOMP,
+}               t_input;
+
 class IModule {
     public:
         virtual ~IModule() = default;

@@ -16,7 +16,6 @@ int     main(int argc, char **argv)
 {
     if (checkInput(argc, argv))
     {
-        const char      *modules[3] = {"./module_1/lib1_NCurses.so", "./module_2/lib2_OpenGL.so", "./module_3/lib3_SDL.so"};
         int             menu_choice;
         GameEnvironment *game;
         bool            quit;

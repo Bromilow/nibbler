@@ -60,7 +60,8 @@ int main_menu(void)
             xMax = newXMax;
             yMax = newYMax;
         }
-
+        
+        keypad(menuwin, true);  // Enable keypad
         wclear(stdscr);
         wclear(menuwin);
 

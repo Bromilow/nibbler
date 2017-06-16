@@ -35,6 +35,7 @@ public:
 	~ModuleController(void);
 
     IModule*    module;
+    t_input     input;
     Level &     levelData;
     
     int     loadLibrary(const char *filename);
