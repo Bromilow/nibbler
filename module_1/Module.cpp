@@ -12,7 +12,7 @@
 
 #include "Module.hpp"
 
-Module::Module(Level & data) : levelData(data)
+Module::Module(GameEnvironment & data) : gameData(data)
 {
 	this->_oldSIGWINCH = signal(SIGWINCH, NULL);
 	//std::cout << "Module::Default constructor" << std::endl; //debug
@@ -33,8 +33,8 @@ Module::Module(Level & data) : levelData(data)
 	getmaxyx(stdscr, this->_terminal_H, this->_terminal_W);
 
 	// Get padding to center map in terminal
-	this->_padX = (this->_terminal_W - this->levelData.mapWidth) / 2;
-	this->_padY = (this->_terminal_H - this->levelData.mapHeight) / 2;
+	this->_padX = (this->_terminal_W - this->gameData.mapWidth) / 2;
+	this->_padY = (this->_terminal_H - this->gameData.mapHeight) / 2;
 
 	// Game area
 	this->_gameWindow = newwin(this->_terminal_H - INFO_WIN_H, this->_terminal_W, 0, 0);
@@ -66,7 +66,7 @@ Module::~Module()
 	signal(SIGWINCH, this->_oldSIGWINCH);
 }
 
-Module::Module(const Module & src) : levelData(src.levelData)
+Module::Module(const Module & src) : gameData(src.gameData)
 {
 	//std::cout << "Module::Copy constructor" << std::endl; //debug
 	*this = src;
@@ -84,38 +84,43 @@ Module & Module::operator=(const Module & rhs)
 }
 
 // Member functions
-int     Module::getInput(void)
+t_input		Module::getInput(const bool accept)
 {
 	//std::cout << "Module::getInput()" << std::endl; //debug
-    int	choice = wgetch(this->_gameWindow);
-	t_input ret;
+    int	choice;
 
-	switch(choice)
-	{
-		case KEY_UP:
-			return UP;
-		case KEY_DOWN:
-			return DOWN;
-		case KEY_LEFT:
-			return LEFT;
-		case KEY_RIGHT:
-			return RIGHT;
-		case 27:
-			return QUIT;
-		case 'p':
-			return PAUSE;
-		case '1':
-			return MOD1;
-		case '2':
-			return MOD2;
-		case '3':
-			return MOD3;
-		case ' ':
-			return SUPACHOMP;
-		default:
-			return NONE;
+	if (!accept)
+		getch();
+	else {
+		choice = wgetch(this->_gameWindow);
+		switch(choice)
+		{
+			case KEY_UP:
+				return UP;
+			case KEY_DOWN:
+				return DOWN;
+			case KEY_LEFT:
+				return LEFT;
+			case KEY_RIGHT:
+				return RIGHT;
+			case 27:
+			case 'q':
+				return QUIT;
+			case 'p':
+				return PAUSE;
+			case '1':
+				return MOD1;
+			case '2':
+				return MOD2;
+			case '3':
+				return MOD3;
+			case ' ':
+				return SUPACHOMP;
+			default:
+				return NONE;
+		}
 	}
-	return (choice);
+	return (NONE);
 }
 
 int		Module::updateDisplay(void)
@@ -125,12 +130,23 @@ int		Module::updateDisplay(void)
 
 	// Get terminal size
 	getmaxyx(stdscr, newYMax, newXMax);
-	if (newXMax <= this->levelData.mapWidth + 5 || newYMax <= this->levelData.mapHeight + 10)
+	if (newXMax <= this->gameData.mapWidth + 5 || newYMax <= this->gameData.mapHeight + 10)
 	{
 		wclear(stdscr);
 		wclear(this->_gameWindow);
 		wclear(this->_infoWindow);    
-		mvwprintw(this->_gameWindow, 1, 1, "Terminal too smwall!");
+		mvwprintw(this->_gameWindow, 1, 1, "Terminal too small!");
+		wrefresh(stdscr);
+		wrefresh(this->_gameWindow);
+		wrefresh(this->_infoWindow);
+		return (1);
+	}
+	else if (newXMax <= this->gameData.paused)
+	{
+		wclear(stdscr);
+		wclear(this->_gameWindow);
+		wclear(this->_infoWindow);    
+		mvwprintw(this->_gameWindow, 1, 1, "\\;---[ PAUSED ]---;/");
 		wrefresh(stdscr);
 		wrefresh(this->_gameWindow);
 		wrefresh(this->_infoWindow);
@@ -147,8 +163,8 @@ int		Module::updateDisplay(void)
 		mvwin(this->_infoWindow, newYMax - INFO_WIN_H, 0);
 
 		// Update padding
-		this->_padX = (newXMax - this->levelData.mapWidth) / 2;
-		this->_padY = (newYMax - this->levelData.mapHeight) / 2;
+		this->_padX = (newXMax - this->gameData.mapWidth) / 2;
+		this->_padY = (newYMax - this->gameData.mapHeight) / 2;
 
 		// Update dimensions
 		this->_terminal_W = newXMax;
@@ -158,13 +174,13 @@ int		Module::updateDisplay(void)
 	wclear(this->_gameWindow);
 	wclear(this->_infoWindow);
 
-	for (y = 0; y < this->levelData.mapHeight; ++y)
+	for (y = 0; y < this->gameData.mapHeight; ++y)
 	{
 		x = 0;
 		wmove(this->_gameWindow, y + this->_padY, x + this->_padX);
-		for (; x < this->levelData.mapWidth; ++x)
+		for (; x < this->gameData.mapWidth; ++x)
 		{
-			switch (this->levelData.map[y][x])
+			switch (this->gameData.map[y][x])
 			{
 				case MAP_NONE:
 					wprintw(this->_gameWindow, " ");
@@ -176,10 +192,24 @@ int		Module::updateDisplay(void)
 					wprintw(this->_gameWindow, "X");
 					break;
 				case MAP_PLAYER:
-					wprintw(this->_gameWindow, "O");
+					waddch(this->_gameWindow, ACS_DIAMOND);
 					break;
 			}
-			
+			if (this->gameData.map[y][x] == this->gameData.snakeLength + 9)
+			{
+				// its the tail
+				wprintw(this->_gameWindow, ".");
+				/*if (this->gameData.snakeDirection % 2)
+					wprintw(this->_gameWindow, "|");
+				else
+					wprintw(this->_gameWindow, "-");*/
+			}
+			else if ((this->gameData.map[y][x] > MAP_PLAYER) &&
+				(this->gameData.map[y][x] < this->gameData.snakeLength + 9))
+			{
+				// its the body
+				wprintw(this->_gameWindow, "o");
+			}
 		}
 		wprintw(this->_gameWindow, "\n");
 	}
@@ -199,7 +229,7 @@ int		Module::updateDisplay(void)
 
 // Class factories
 // Need to add type def for class factories --- http://www.tldp.org/HOWTO/C++-dlopen/thesolution.html#AEN216
-IModule*	create_module(Level & data) 
+IModule*	create_module(GameEnvironment & data) 
 {
 	//std::cout << "Module::Class Factory::create_module()" << std::endl; //debug
 	/*(void)data;*/

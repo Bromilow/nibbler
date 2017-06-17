@@ -6,7 +6,7 @@
 #    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/09 03:17:50 by kbam7             #+#    #+#              #
-#    Updated: 2017/06/15 19:45:06 by kbam7            ###   ########.fr        #
+#    Updated: 2017/06/17 18:13:30 by kbam7            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ MOD_NCRS	= lib1_NCurses.so
 
 #-- Core Program
 CORE_SRC	= core/src
-SRCS		=	$(CORE_SRC)/main.cpp $(CORE_SRC)/Level.cpp $(CORE_SRC)/ModuleController.cpp $(CORE_SRC)/GameEnvironment.cpp
+SRCS		=	$(CORE_SRC)/main.cpp $(CORE_SRC)/GameEnvironment.cpp $(CORE_SRC)/ModuleController.cpp $(CORE_SRC)/Core.cpp
 OBJS		= $(SRCS:%.cpp=%.o)
 
 #-- OpenGL Module
@@ -73,3 +73,5 @@ run:
 	@$(MAKE) -s all
 	./$(PROG) 17 30
 
+run_valgrind:
+	valgrind --leak-check=full --show-reachable=yes ./nibbler 17 30

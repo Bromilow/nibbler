@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/11 20:08:54 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/16 15:01:30 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/17 18:13:30 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 /*IModule*    ModuleController::module = NULL;*/
 
-ModuleController::ModuleController(Level & data) : levelData(data), input(NONE)
+ModuleController::ModuleController(GameEnvironment & data) : input(NONE), gameData(data)
 {
     //std::cout << "ModuleController::Parameterized constructor" << std::endl;
 }
 
-ModuleController::ModuleController(ModuleController const & src) : levelData(src.levelData), input(NONE)
+ModuleController::ModuleController(ModuleController const & src) : input(NONE), gameData(src.gameData)
 {
     //std::cout << "ModuleController::Copy constructor" << std::endl;
     *this = src;
@@ -66,7 +66,7 @@ int     ModuleController::loadLibrary(const char *filename)
     if (this->_destroy_module != NULL)
     {
         // Create module
-        this->module = create_module(this->levelData);
+        this->module = create_module(this->gameData);
         return (1);
     }
     return (0);
