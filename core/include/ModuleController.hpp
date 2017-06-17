@@ -29,12 +29,13 @@ typedef void     (*destroyModule_t)(IModule*);
 
 class ModuleController {
 public:
-    ModuleController(const char *filename, Level & data);
+    ModuleController(Level & data);
 	ModuleController(ModuleController const & src);
 	ModuleController & operator=(ModuleController const & rhs);
 	~ModuleController(void);
 
     IModule*    module;
+    t_input     input;
     Level &     levelData;
     
     int     loadLibrary(const char *filename);

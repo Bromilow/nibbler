@@ -29,23 +29,20 @@
 # define MAX_MAP_H    		68
 # define DEFAULT_GAME_FPS	60
 # define ONE_NANOSEC		1000000000
-
-class Snake {
-
-};
+# define N_MODULES			3
 
 class GameEnvironment {
 
 	public:
-		GameEnvironment(const unsigned int w, const unsigned int h, const char *filename);
+		GameEnvironment(const unsigned int w, const unsigned int h, const int lib);
 		GameEnvironment(GameEnvironment const & src);
 		GameEnvironment & operator=(GameEnvironment const & rhs);
 		~GameEnvironment(void);
 
-		Snake*				player;				/* score, position, direction, (size/length)*/
 		Level*				levelData;			/* map array, food, food position */
 		ModuleController*	moduleController;	/* load, initialize, manage, uninitialize, unload library */
-		unsigned int		gameFPS;			/* default: 60fps (ONE_NANOSEC/60)     */
+		const char			*modulePaths[N_MODULES];
+		unsigned int		gameFPS;			/* default: 60fps     */
 		unsigned int		gameSpeed;			/* gameSpeed = (ONE_NANOSEC / gameFPS) / 100; gameSpeed *= 100; gameSpeed is now rounded to hundreds */
 
 		int     gameLoop(void);

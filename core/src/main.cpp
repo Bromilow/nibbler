@@ -16,7 +16,6 @@ int     main(int argc, char **argv)
 {
     if (checkInput(argc, argv))
     {
-        const char      *modules[3] = {"./module_1/lib1_NCurses.so", "./module_2/lib2_OpenGL.so", "./module_3/lib3_SDL.so"};
         int             menu_choice;
         GameEnvironment *game;
         bool            quit;
@@ -33,7 +32,7 @@ int     main(int argc, char **argv)
             {
                 try {
                     // Set up player, map, and module handler
-                    game = new GameEnvironment(std::atoi(argv[1]), std::atoi(argv[2]), modules[menu_choice - 1]);
+                    game = new GameEnvironment(std::atoi(argv[1]), std::atoi(argv[2]), menu_choice - 1);
 
                     // Start game loop
                     game->gameLoop();

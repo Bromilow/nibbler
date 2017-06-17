@@ -12,10 +12,11 @@
 
 #include "Level.hpp"
 
-Level::Level(const unsigned int w, const unsigned int h) : mapWidth(w), mapHeight(h)
+Level::Level(const unsigned int w, const unsigned int h) : mapWidth(w), mapHeight(h), snakeLength(4), snakeDirection(UP)
 {
     // Create map height
     map = new unsigned int*[h];
+    srand(time(0));
 
     for (unsigned int y = 0; y < h; ++y) {
         // Create new row
@@ -29,7 +30,10 @@ Level::Level(const unsigned int w, const unsigned int h) : mapWidth(w), mapHeigh
                 map[y][x] = MAP_WALL;
             } else if (y == (h / 2) && x == (w / 2)) {
                 // Center of map, assign player start position
+                this->snakeLocation = y * x;
                 map[y][x] = MAP_PLAYER;
+                for (int i = 1 ; i <= 4; ++i)
+                    map[y + i][x] = MAP_PLAYER + i;
             } else {
                 // Assign empty block
                 map[y][x] = MAP_NONE;
@@ -37,6 +41,8 @@ Level::Level(const unsigned int w, const unsigned int h) : mapWidth(w), mapHeigh
         }
     }
 }
+
+
 
 Level::Level(Level const & src)
 {
@@ -53,6 +59,9 @@ Level & Level::operator=(Level const & rhs)
         this->map = rhs.map;
         this->mapWidth = rhs.mapWidth;
         this->mapHeight = rhs.mapHeight;
+        this->snakeLength = rhs.snakeLength;
+        this->snakeLocation = rhs.snakeLocation;
+        this->snakeDirection = rhs.snakeDirection;
     }
     return (*this);
 }
@@ -81,4 +90,67 @@ unsigned int    Level::getMapWidth(void) const
 unsigned int    Level::getMapHeight(void) const
 {
     return (this->mapHeight);
+}
+
+void            Level::changeSnakeDir(t_input action)
+{
+    if (this->snakeDirection % 2 != action % 2)
+        this->snakeDirection = action;
+}
+
+ unsigned int    Level::moveToNextBlock(void)
+ {
+    unsigned int    x;
+    unsigned int    y;
+
+    x = this->snakeLocation % this->mapWidth;
+    y = this->snakeLocation / this->mapWidth;
+
+    switch (this->snakeDirection)
+    {
+        case UP:
+            --y;
+        case RIGHT:
+            ++x;
+        case DOWN:
+            ++y;
+        case LEFT:
+            --x;
+    }
+    if (this->checkCollision(x, y))
+        return (0);
+    else
+        this->map[y][x] = MAP_PLAYER; 
+    return(1);      
+}
+
+void            Level::updateMapData(void)
+{
+    int x, y;
+
+    for (y = 0; y < this->mapHeight; ++y)
+    {
+        x = 0;
+        for (; x < this->mapWidth; ++x)
+        {
+            if (this->map[y][x] == this->snakeLength + 9)
+                this->map[y][x] = MAP_NONE;
+            if (this->map[y][x] >= MAP_PLAYER)
+                this->map[y][x] += 1;
+        }
+    }
+}
+
+void            Level::generateFood(const int amount)
+{
+    int tmp;
+
+    for (int i = 0; i < amount && i < MAP_FOOD; ++i)
+    {
+        tmp = rand % (this->mapHeight * this->mapWidth);
+        if (this->checkCollision( tmp % this->mapWidth, tmp / this->mapWidth))
+            --i;
+        else
+            this->foodLocation[i] = tmp;
+    }
 }
