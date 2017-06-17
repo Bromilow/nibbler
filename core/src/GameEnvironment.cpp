@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/11 14:25:39 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/16 16:29:05 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/16 23:54:08 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,12 +60,12 @@ GameEnvironment & GameEnvironment::operator=(GameEnvironment const & rhs)
 GameEnvironment::~GameEnvironment(void)
 {
     //std::cout << "GameEnvironment::Destructor" << std::endl;  //debug
-    if (this->player != NULL)
-        delete this->player;
-    if (this->levelData != NULL)
-        delete this->levelData;
     if (this->moduleController != NULL)
         delete this->moduleController;
+    if (this->levelData != NULL)
+        delete this->levelData;
+    if (this->player != NULL)
+        delete this->player;
 }
 
 int     GameEnvironment::gameLoop(void)
