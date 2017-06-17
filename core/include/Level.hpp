@@ -33,8 +33,11 @@
 # define MAP_WALL 1
 # define MAP_FOOD 2
 # define MAP_PLAYER 10
+# define MAX_FOOD 3
+
 
 # include <cstdlib>
+# include <ctime>
 
 class Level {
 public:
@@ -46,9 +49,19 @@ public:
     unsigned int    **map;
     unsigned int    mapWidth;
     unsigned int    mapHeight;
+    unsigned int    snakeLength;  
+    unsigned int    snakeLocation;
+    t_input         snakeDirection;
+    unsigned int    foodLocation[MAX_FOOD];
 
     unsigned int    getMapWidth(void) const;
     unsigned int    getMapHeight(void) const;
+    void            changeSnakeDir(t_input action);
+    void            generateFood(const int amount);
+
+    unsigned int    moveToNextBlock(void);
+    void            updateMapData(void);
+
     /*unsigned int    spawnFood();*/
 
     /*int loadNewMap(const unsigned int w, const unsigned int h);*/

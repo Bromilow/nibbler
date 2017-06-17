@@ -32,7 +32,7 @@ int     main(int argc, char **argv)
             {
                 try {
                     // Set up player, map, and module handler
-                    game = new GameEnvironment(std::atoi(argv[1]), std::atoi(argv[2]), modules[menu_choice - 1]);
+                    game = new GameEnvironment(std::atoi(argv[1]), std::atoi(argv[2]), menu_choice - 1);
 
                     // Start game loop
                     game->gameLoop();

@@ -19,9 +19,9 @@
 typedef enum    e_input {
     NONE = 0,
     UP,
+    RIGHT,
     DOWN,
     LEFT,
-    RIGHT,
     QUIT,
     PAUSE,
     MOD1,

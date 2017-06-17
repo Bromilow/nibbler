@@ -14,14 +14,12 @@
 
 /*IModule*    ModuleController::module = NULL;*/
 
-ModuleController::ModuleController(const char *filename, Level & data) : levelData(data), input(0)
+ModuleController::ModuleController(Level & data) : levelData(data), input(NONE)
 {
     //std::cout << "ModuleController::Parameterized constructor" << std::endl;
-    (void)filename;
-    //this->loadLibrary(filename);
 }
 
-ModuleController::ModuleController(ModuleController const & src) : levelData(src.levelData), input(0)
+ModuleController::ModuleController(ModuleController const & src) : levelData(src.levelData), input(NONE)
 {
     //std::cout << "ModuleController::Copy constructor" << std::endl;
     *this = src;

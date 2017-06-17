@@ -31,19 +31,14 @@
 # define ONE_NANOSEC		1000000000
 # define N_MODULES			3
 
-class Snake {
-
-};
-
 class GameEnvironment {
 
 	public:
-		GameEnvironment(const unsigned int w, const unsigned int h, const char *filename);
+		GameEnvironment(const unsigned int w, const unsigned int h, const int lib);
 		GameEnvironment(GameEnvironment const & src);
 		GameEnvironment & operator=(GameEnvironment const & rhs);
 		~GameEnvironment(void);
 
-		Snake*				player;				/* score, position, direction, (size/length)*/
 		Level*				levelData;			/* map array, food, food position */
 		ModuleController*	moduleController;	/* load, initialize, manage, uninitialize, unload library */
 		const char			*modulePaths[N_MODULES];

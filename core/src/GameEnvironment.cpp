@@ -20,7 +20,7 @@ GameEnvironment::GameEnvironment(void)
     //std::cout << "GameEnvironment::Default constructor" << std::endl; //debug
 }
 
-GameEnvironment::GameEnvironment(const unsigned int w, const unsigned int h, const char *filename) : gameFPS(DEFAULT_GAME_FPS)
+GameEnvironment::GameEnvironment(const unsigned int w, const unsigned int h, const int lib) : gameFPS(DEFAULT_GAME_FPS)
 {
     const char *tmp[N_MODULES] = {"./module_1/lib1_NCurses.so", "./module_2/lib2_OpenGL.so", "./module_3/lib3_SDL.so"};
     for (int i = 0; i < N_MODULES; ++i)
@@ -33,8 +33,8 @@ GameEnvironment::GameEnvironment(const unsigned int w, const unsigned int h, con
     this->player = NULL;
     this->levelData = new Level(w, h);
 
-    this->moduleController = new ModuleController(filename, *(this->levelData));
-    this->moduleController->loadLibrary(filename);
+    this->moduleController = new ModuleController(*(this->levelData));
+    this->moduleController->loadLibrary(this->modulePaths[lib]);
 }
 
 GameEnvironment::GameEnvironment(GameEnvironment const & src)
@@ -92,28 +92,31 @@ int     GameEnvironment::gameLoop(void)
             switch (action)
             {
                 case UP:
-                    this->player->changeDirection(action);
                 case DOWN:
-                    this->player->changeDirection(action);
                 case LEFT:
-                    this->player->changeDirection(action);
                 case RIGHT:
-                    this->player->changeDirection(action);
+                    this->levelData->changeSnakeDir(action);
                 case QUIT:
                     return (0);
                 case PAUSE:
                     this->levelData->paused = true;
                 case MOD1:
-                    this->loadNewModule();
+                    this->loadNewModule(this->modulePaths[0]);
                 case MOD2
                     // load new module
+                    this->loadNewModule(this->modulePaths[1]);
                 case MOD3
                     // load new module
+                    this->loadNewModule(this->modulePaths[2]);
                 case SUPACHOMP
                     // do stuff
+                    this->player->supachomp = true;
             }
-            // Update position and gamestate according to input (left, right, pause, exit, main menu)
 
+            // Update position and gamestate according to input (left, right, pause, exit, main menu)
+            this->levelData->updateMapData();
+           if (!(this->levelData->moveToNextBlock()))
+                this->levelData->gameOver();
 
             // Update display
             this->moduleController->module->updateDisplay();
