@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/09 12:43:32 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/16 17:28:40 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/17 21:22:15 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@ int     main(int argc, char **argv)
     if (checkInput(argc, argv))
     {
         int             menu_choice;
-        GameEnvironment *game;
+        Core            *game;
         bool            quit;
-
+        
         quit = false;
         while (!quit)
         {
@@ -32,7 +32,7 @@ int     main(int argc, char **argv)
             {
                 try {
                     // Set up player, map, and module handler
-                    game = new GameEnvironment(std::atoi(argv[1]), std::atoi(argv[2]), menu_choice - 1);
+                    game = new Core(std::atoi(argv[1]), std::atoi(argv[2]), menu_choice - 1);
 
                     // Start game loop
                     game->gameLoop();

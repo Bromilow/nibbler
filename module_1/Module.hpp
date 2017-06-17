@@ -23,15 +23,15 @@
 class Module : public IModule
 {
     public:
-        Module(Level & data);
+        Module(GameEnvironment & data);
         ~Module();
         Module(const Module & src);
         Module & operator=(const Module & rhs);
         
-        virtual int getInput(void);
-        virtual int updateDisplay(void);
+        virtual t_input getInput(const bool accept);
+        virtual int     updateDisplay(void);
 
-        Level & levelData;
+        GameEnvironment & gameData;
 
     private:
         WINDOW          *_gameWindow;
@@ -44,7 +44,7 @@ class Module : public IModule
         
 };
 
-extern "C" IModule* create_module(Level & data);
+extern "C" IModule* create_module(GameEnvironment & data);
 extern "C" void     destroy_module(IModule* module);
 
 #endif /* MODULE_HPP */
