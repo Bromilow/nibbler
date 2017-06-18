@@ -71,7 +71,7 @@ run:
 	@rm -f $(PROG)
 	@echo "\033[01;36m$(PROG) \t\t-- \033[00;32mREMOVED EXECUTABLE\033[0m\n"
 	@$(MAKE) -s all
-	./$(PROG) 17 30
+	./$(PROG) 30 30 2> outerr.txt
 
 run_valgrind:
 	valgrind --leak-check=full --show-reachable=yes ./nibbler 17 30

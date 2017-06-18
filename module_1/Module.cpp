@@ -1,20 +1,10 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Module.cpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/06/09 00:41:48 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/09 14:31:17 by kbam7            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+
 
 #include "Module.hpp"
 
-Module::Module(GameEnvironment & data) : gameData(data)
+Module::Module(GameEnvironment & data) : gameData(data),  _choice(-1)
 {
-	this->_oldSIGWINCH = signal(SIGWINCH, NULL);
+	sigaction(SIGWINCH, NULL, &this->_oldSIGWINCH);
 	//std::cout << "Module::Default constructor" << std::endl; //debug
 	this->_terminal_H = 0;
 	this->_terminal_W = 0;
@@ -37,7 +27,7 @@ Module::Module(GameEnvironment & data) : gameData(data)
 	this->_padY = (this->_terminal_H - this->gameData.mapHeight) / 2;
 
 	// Game area
-	this->_gameWindow = newwin(this->_terminal_H - INFO_WIN_H, this->_terminal_W, 0, 0);
+	this->_gameWindow = newwin(this->_terminal_H - INFO_WIN_H, this->_terminal_W, INFO_WIN_H, 0);
 	/*box(this->_gameWindow, 0, 0);*/
 	nodelay(this->_gameWindow, true);
 	keypad(this->_gameWindow, true);
@@ -47,7 +37,7 @@ Module::Module(GameEnvironment & data) : gameData(data)
 	scrollok(this->_gameWindow, true);*/
 
 	// Info bar
-	this->_infoWindow = newwin(INFO_WIN_H, this->_terminal_W, this->_terminal_H - INFO_WIN_H, 0);
+	this->_infoWindow = newwin(INFO_WIN_H, this->_terminal_W, 0, 0);
 	/*box(this->_infoWindow, 0, 0);*/
 	nodelay(this->_infoWindow, true);
 
@@ -63,7 +53,7 @@ Module::~Module()
 	delwin(this->_gameWindow);
 	delwin(this->_infoWindow);
 	endwin();
-	signal(SIGWINCH, this->_oldSIGWINCH);
+	sigaction(SIGWINCH, &this->_oldSIGWINCH, NULL);
 }
 
 Module::Module(const Module & src) : gameData(src.gameData)
@@ -86,30 +76,39 @@ Module & Module::operator=(const Module & rhs)
 // Member functions
 t_input		Module::getInput(int accept)
 {
-	std::cerr << "Module::getInput():accept: " << accept << std::endl; //debug
-    static int	choice = -1;
-/*	char *tmp = nullptr;*/
+    int	choice;
 
-	/*wgetstr(this->_gameWindow, tmp);*/
-	/*while (wgetch(this->_gameWindow)) ;*/
-	/*(void)accept;*/
-/*	if (accept == 0)
-	{
-		lastChoice = -1;
-		while ((choice = wgetch(this->_gameWindow)) != ERR)
-		{
-			std::cerr << choice << std::endl;
-			lastChoice = choice;
-		}
-		ungetch(lastChoice);
-		return (NONE);
-	}*/
 	choice = wgetch(this->_gameWindow);
-	std::cerr << "B4choice: " << choice << std::endl;
+	//std::cerr << "B4-1:\nchoice: " << choice << "\n_choice: " << this->_choice << std::endl;
+	if (choice != -1 && this->_choice != choice)
+		this->_choice = choice;
+	//std::cerr << "B4-2:\nchoice: " << choice << "\n_choice: " << this->_choice << std::endl;
 	if (accept == 1)
 	{
-		flushinp();
-		std::cerr << "acceptChoice: " << choice << std::endl;
+		choice = this->_choice;
+		this->_choice = -1;
+		if (this->gameData.paused)
+			switch(choice)
+			{
+				case 27:
+				case 'q':
+					return QUIT;
+				case 'p':
+					return PAUSE;
+				case '1':
+					return MOD1;
+				case '2':
+					return MOD2;
+				case '3':
+					return MOD3;
+				case KEY_UP:
+				case KEY_DOWN:
+				case KEY_LEFT:
+				case KEY_RIGHT:
+				case ' ':
+				default:
+					return NONE;
+			}
 		switch(choice)
 		{
 			case KEY_UP:
@@ -142,7 +141,7 @@ t_input		Module::getInput(int accept)
 
 int		Module::updateDisplay(void)
 {
-	std::cerr << "Module::updateDisplay()" << std::endl; //debug
+	//std::cerr << "Module::updateDisplay()" << std::endl; //debug
 	/*static unsigned int n = 0;*/
 	unsigned int 		x, y, newYMax, newXMax;
 
@@ -151,34 +150,23 @@ int		Module::updateDisplay(void)
 	if (newXMax <= this->gameData.mapWidth + 5 || newYMax <= this->gameData.mapHeight + 10)
 	{
 		wclear(stdscr);
-		wclear(this->_gameWindow);
 		wclear(this->_infoWindow);    
+		wclear(this->_gameWindow);
 		mvwprintw(this->_gameWindow, 1, 1, "Terminal too small!");
 		wrefresh(stdscr);
-		wrefresh(this->_gameWindow);
 		wrefresh(this->_infoWindow);
+		wrefresh(this->_gameWindow);
 		return (1);
 	}
-	else if (newXMax <= this->gameData.paused)
+	if (newXMax != this->_terminal_W || newYMax != this->_terminal_H)
 	{
-		wclear(stdscr);
-		wclear(this->_gameWindow);
-		wclear(this->_infoWindow);    
-		mvwprintw(this->_gameWindow, 1, 1, "\\;---[ PAUSED ]---;/");
-		wrefresh(stdscr);
-		wrefresh(this->_gameWindow);
-		wrefresh(this->_infoWindow);
-		return (1);
-	}
-	else if (newXMax != this->_terminal_W || newYMax != this->_terminal_H)
-	{
-		// Resize and move gamewin
-		wresize(this->_gameWindow, newYMax - INFO_WIN_H, newXMax);
-		mvwin(this->_gameWindow, 0, 0);
-
 		// Resize and move infowin
 		wresize(this->_infoWindow, INFO_WIN_H, newXMax);
-		mvwin(this->_infoWindow, newYMax - INFO_WIN_H, 0);
+		mvwin(this->_infoWindow, 0, 0);
+
+		// Resize and move gamewin
+		wresize(this->_gameWindow, newYMax - INFO_WIN_H, newXMax);
+		mvwin(this->_gameWindow, newYMax - INFO_WIN_H , 0);
 
 		// Update padding
 		this->_padX = (newXMax - this->gameData.mapWidth) / 2;
@@ -188,9 +176,24 @@ int		Module::updateDisplay(void)
 		this->_terminal_W = newXMax;
 		this->_terminal_H = newYMax;
 	}
+	if (this->gameData.paused)
+	{
+		wclear(stdscr);
+		wclear(this->_infoWindow);    
+		wclear(this->_gameWindow);
+		mvwprintw(this->_gameWindow, this->_terminal_H / 2, this->_terminal_W / 2, "\\;---[ PAUSED ]---;/");
+		wrefresh(stdscr);
+		wrefresh(this->_infoWindow);
+		wrefresh(this->_gameWindow);
+		return(1);
+	}
 
-	wclear(this->_gameWindow);
 	wclear(this->_infoWindow);
+	wclear(this->_gameWindow);
+
+
+	mvwprintw(this->_infoWindow,1,1, "Time : %d\n", this->gameData.gameTime);
+	mvwprintw(this->_infoWindow,2,1, "your score is %d", this->gameData.snakeLength );
 
 	for (y = 0; y < this->gameData.mapHeight; ++y)
 	{
@@ -201,22 +204,23 @@ int		Module::updateDisplay(void)
 			switch (this->gameData.map[y][x])
 			{
 				case MAP_NONE:
-					wprintw(this->_gameWindow, " ");
+					wprintw(this->_gameWindow, "  ");
 					break;
 				case MAP_WALL:
-					wprintw(this->_gameWindow, "#");
+					wprintw(this->_gameWindow, "# ");
 					break;
 				case MAP_FOOD:
-					wprintw(this->_gameWindow, "X");
+					wprintw(this->_gameWindow, "X ");
 					break;
 				case MAP_PLAYER:
 					waddch(this->_gameWindow, ACS_DIAMOND);
+					waddch(this->_gameWindow, ' ');
 					break;
 			}
 			if (this->gameData.map[y][x] == this->gameData.snakeLength + 9)
 			{
 				// its the tail
-				wprintw(this->_gameWindow, ".");
+				wprintw(this->_gameWindow, ". ");
 				/*if (this->gameData.snakeDirection % 2)
 					wprintw(this->_gameWindow, "|");
 				else
@@ -226,18 +230,20 @@ int		Module::updateDisplay(void)
 				(this->gameData.map[y][x] < this->gameData.snakeLength + 9))
 			{
 				// its the body
-				wprintw(this->_gameWindow, "o");
+				wprintw(this->_gameWindow, "o ");
 			}
 		}
 		wprintw(this->_gameWindow, "\n");
 	}
 
-	box(this->_gameWindow, 0, 0);
 	box(this->_infoWindow, 0, 0);
+	box(this->_gameWindow, 0, 0);
+
 
 	// Update virtual screen
-	wnoutrefresh(this->_gameWindow);
 	wnoutrefresh(this->_infoWindow);
+	wnoutrefresh(this->_gameWindow);
+
 
 	// update physical screen
 	doupdate();

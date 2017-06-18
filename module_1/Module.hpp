@@ -34,13 +34,15 @@ class Module : public IModule
         GameEnvironment & gameData;
 
     private:
-        WINDOW          *_gameWindow;
-        WINDOW          *_infoWindow;
-        unsigned int    _terminal_W;
-        unsigned int    _terminal_H;
-        unsigned int    _padX;
-        unsigned int    _padY;
-        sighandler_t    _oldSIGWINCH;
+        WINDOW              *_gameWindow;
+        WINDOW              *_infoWindow;
+        unsigned int        _terminal_W;
+        unsigned int        _terminal_H;
+        unsigned int        _padX;
+        unsigned int        _padY;
+        struct sigaction    _oldSIGWINCH;
+        int                 _choice;
+
         
 };
 

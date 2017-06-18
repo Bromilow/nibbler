@@ -70,6 +70,7 @@ public:
     bool            paused;
     bool            supachomp;
     bool            snakeAlive;
+    unsigned int	gameTime;
 
 /*    unsigned int    getMapWidth(void) const;
     unsigned int    getMapHeight(void) const;*/

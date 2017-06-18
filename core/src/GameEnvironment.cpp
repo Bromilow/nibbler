@@ -1,21 +1,11 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   GameEnvironment.cpp                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/06/13 20:15:03 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/17 17:08:55 by kbam7            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+
 
 #include "GameEnvironment.hpp"
 #include <iostream> //debug
 
 GameEnvironment::GameEnvironment(const unsigned int w, const unsigned int h)
     : mapWidth(w), mapHeight(h), snakeLength(4), snakeDirection(UP),
-    foodCount(3), paused(false), supachomp(false), snakeAlive(true)
+    foodCount(3), paused(false), supachomp(false), snakeAlive(true), gameTime(0)
 {
     // Seed rand
     srand(time(0));

@@ -20,13 +20,12 @@ Core::Core(void)
     //std::cout << "Core::Default constructor" << std::endl; //debug
 }
 
-Core::Core(const unsigned int w, const unsigned int h, const int lib) : gameFPS(2/*DEFAULT_GAME_FPS*/)
+Core::Core(const unsigned int w, const unsigned int h, const int lib) :
+    gameFPS(DEFAULT_GAME_FPS)
 {
     // Change signal signal handling
     struct sigaction    newAct;
-    /*void    (*shutdownFunc)(int, siginfo_t *, void *);
-*/
-    /*shutdownFunc = &_shutdown;*/
+
     newAct.sa_sigaction = &_shutdown;
     newAct.sa_flags = SA_SIGINFO;
     sigaction(SIGINT, &newAct, &this->_oldSIGINT);
@@ -84,21 +83,29 @@ int     Core::gameLoop(void)
 {
     long            _oldNanoSec;
     time_t          _oldSec;
-    int             i;
     struct timespec timeNow;
     t_input         action;
+    int             diff;
 
     clock_gettime(CLOCK_REALTIME, &timeNow);
     _oldNanoSec = timeNow.tv_nsec;
     _oldSec  = timeNow.tv_sec;
-    i = 0;
-    while (i < 5 && this->gameData->snakeAlive)
+    diff = 0;
+    while (this->gameData->snakeAlive)
     {
         clock_gettime(CLOCK_REALTIME, &timeNow);
-        action = this->moduleController->module->getInput(0);
-        if ((timeNow.tv_nsec - _oldNanoSec) > this->gameSpeed) // 16666600 * 60 == 1 sec 
+        if ((timeNow.tv_sec - _oldSec) > 0)
+        {
+            if (!this->gameData->paused)
+                ++this->gameData->gameTime;
+            _oldSec  = timeNow.tv_sec;
+            diff = ONE_NANOSEC - _oldNanoSec;
+            _oldNanoSec = 0;
+        }
+        if ((diff + timeNow.tv_nsec - _oldNanoSec) >= this->gameSpeed) // 1 sec / FPS 
         {
             _oldNanoSec = timeNow.tv_nsec;
+            diff = 0;
 
             action = this->moduleController->module->getInput(1);
             switch (action)
@@ -133,23 +140,16 @@ int     Core::gameLoop(void)
                     break;
             }
 
-            // Update position and gamestate according to input (left, right, pause, exit, main menu)
-            this->gameData->updateMapData();
-           /*if (!(this->gameData->moveToNextBlock()))
-                this->gameData->gameOver();*/
-
+            if (!this->gameData->paused)
+            {
+                // Update position and gamestate according to input (left, right, pause, exit, main menu)
+                this->gameData->updateMapData();
+            }
             // Update display
             this->moduleController->module->updateDisplay();
         }
-        /*else {
-            action = this->moduleController->module->getInput(0);
-        }*/
-        if ((timeNow.tv_sec - _oldSec) > 0)
-        {
-            ++i;
-            _oldSec  = timeNow.tv_sec;
-            _oldNanoSec = 0;
-        }
+        // Read input, but dont accept it yet
+        this->moduleController->module->getInput(0);
     }
     return (0);
 }

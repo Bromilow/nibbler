@@ -28,7 +28,7 @@
 # define MIN_MAP_H    		0
 # define MAX_MAP_W    		225
 # define MAX_MAP_H    		68
-# define DEFAULT_GAME_FPS	60
+# define DEFAULT_GAME_FPS	3
 # define ONE_NANOSEC		1000000000
 # define N_MODULES			3
 
@@ -59,62 +59,3 @@ class Core {
 void	_shutdown(int signal, siginfo_t *info, void *data);
 
 #endif /* CORE_HPP */
-
-/*
-# include <string>
-# include "GameEnvironment.hpp"
-# include "Player.hpp"
-
-# define DEFAULT_SPEED	1.0f
-# define SPEED_INC		30.0f
-# define MAX_SPEED		0.10f
-# define MULTINOM_RATE	10
-
-class GraphicsHandler;
-
-typedef enum		e_action
-{
-	NONE = 0,
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT,
-	PAUSE,
-	QUIT,
-	LIB1,
-	LIB2,
-	LIB3
-}					t_action;
-
-class Snake
-{
-public:
-	static Snake *		instance;
-	GameEnvironment *				GameEnvironment;
-	Player				player;
-	float				speed;
-	bool				paused;
-	float				clockCountdown;
-	bool				stop;
-	GraphicsHandler *	ghandler;
-
-	Snake();
-	~Snake();
-
-	void				loadLevel(unsigned, unsigned);
-	void				loadLevel(const std::string);
-	void				loadLibrary(const std::string);
-	void				startLevel();
-	void				gameOver();
-	void				generateNom();
-	void				generateNom(unsigned);
-	void				removeNoms();
-	void				launch();
-	void				update();
-	void				handleAction();
-	void				dump(bool = false) const;
-};
-
-#endif
-
-*/
