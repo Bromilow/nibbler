@@ -135,7 +135,7 @@ unsigned int    GameEnvironment::moveToNextBlock(void)
 {
     unsigned int    x;
     unsigned int    y;
-    unsigned int    j, i;
+    /*unsigned int    j, i;*/
 
     x = this->snakeLocation % this->mapWidth - 1;
     y = this->snakeLocation / this->mapWidth;
@@ -156,7 +156,7 @@ unsigned int    GameEnvironment::moveToNextBlock(void)
         this->snakeLocation = (y * this->mapWidth) + (x + 1);
     }
 
-    std::cerr << "1-snakeLocation: " << this->snakeLocation << "  mapWidth: " << this->mapWidth << "  x: " << x << "  y: " << y << std::endl;
+/*    std::cerr << "1-snakeLocation: " << this->snakeLocation << "  mapWidth: " << this->mapWidth << "  x: " << x << "  y: " << y << std::endl;
     std::cerr << "\t0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20\n";
     for (j = 0; j < this->mapHeight; ++j)
     {
@@ -168,7 +168,7 @@ unsigned int    GameEnvironment::moveToNextBlock(void)
         }
         std::cerr << "\n";
     }
-    std::cerr << "\n";
+    std::cerr << "\n";*/
 
     return(1);     
 }

@@ -23,9 +23,15 @@ Core::Core(void)
 Core::Core(const unsigned int w, const unsigned int h, const int lib) : gameFPS(2/*DEFAULT_GAME_FPS*/)
 {
     // Change signal signal handling
-    sigaction(SIGINT, this->_shutdown, this->_oldSIGINT);
-    sigaction(SIGQUIT, this->_shutdown, this->_oldSIGQUIT);
-    sigaction(SIGSEGV, this->_shutdown, this->_oldSIGSEGV);
+    struct sigaction    newAct;
+    /*void    (*shutdownFunc)(int, siginfo_t *, void *);
+*/
+    /*shutdownFunc = &_shutdown;*/
+    newAct.sa_sigaction = &_shutdown;
+    newAct.sa_flags = SA_SIGINFO;
+    sigaction(SIGINT, &newAct, &this->_oldSIGINT);
+    sigaction(SIGQUIT, &newAct, &this->_oldSIGQUIT);
+    sigaction(SIGSEGV, &newAct, &this->_oldSIGSEGV);
 
     // Setup module paths
     const char *tmp[N_MODULES] = {"./module_1/lib1_NCurses.so", "./module_2/lib2_OpenGL.so", "./module_3/lib3_SDL.so"};
@@ -68,6 +74,10 @@ Core::~Core(void)
         delete this->moduleController;
     if (this->gameData != NULL)
         delete this->gameData;
+
+    sigaction(SIGINT, &this->_oldSIGINT, NULL);
+    sigaction(SIGQUIT, &this->_oldSIGQUIT, NULL);
+    sigaction(SIGSEGV, &this->_oldSIGSEGV, NULL);
 }
 
 int     Core::gameLoop(void)
@@ -82,16 +92,15 @@ int     Core::gameLoop(void)
     _oldNanoSec = timeNow.tv_nsec;
     _oldSec  = timeNow.tv_sec;
     i = 0;
-    while (i < 120 && this->gameData->snakeAlive)
+    while (i < 5 && this->gameData->snakeAlive)
     {
         clock_gettime(CLOCK_REALTIME, &timeNow);
-        // Clear input stream
-        this->moduleController->module->getInput(false);
+        action = this->moduleController->module->getInput(0);
         if ((timeNow.tv_nsec - _oldNanoSec) > this->gameSpeed) // 16666600 * 60 == 1 sec 
         {
             _oldNanoSec = timeNow.tv_nsec;
 
-            action = this->moduleController->module->getInput(true);
+            action = this->moduleController->module->getInput(1);
             switch (action)
             {
                 case UP:
@@ -132,6 +141,9 @@ int     Core::gameLoop(void)
             // Update display
             this->moduleController->module->updateDisplay();
         }
+        /*else {
+            action = this->moduleController->module->getInput(0);
+        }*/
         if ((timeNow.tv_sec - _oldSec) > 0)
         {
             ++i;
@@ -153,20 +165,8 @@ void	Core::loadNewModule(const char *libPath)
 
 void	_shutdown(int signal, siginfo_t *info, void *data)
 {
-    static unsigned int n = 0;
-
     (void)signal;
     (void)info;
     (void)data;
-    ++n;
-    if (n < 3) {
-        if (this->moduleController != NULL)
-            delete this->moduleController;
-        if (this->gameData != NULL)
-            delete this->gameData;
-    } else {
-        sigaction(SIGINT, this->_oldSIGINT, NULL);
-        sigaction(SIGQUIT, this->_oldSIGQUIT, NULL);
-        tsigaction(SIGSEGV, this->_oldSIGSEGV, NULL);
-    }
+    exit(EXIT_FAILURE);
 }

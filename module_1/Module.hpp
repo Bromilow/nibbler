@@ -28,7 +28,7 @@ class Module : public IModule
         Module(const Module & src);
         Module & operator=(const Module & rhs);
         
-        virtual t_input getInput(const bool accept);
+        virtual t_input getInput(int accept);
         virtual int     updateDisplay(void);
 
         GameEnvironment & gameData;

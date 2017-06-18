@@ -84,15 +84,32 @@ Module & Module::operator=(const Module & rhs)
 }
 
 // Member functions
-t_input		Module::getInput(const bool accept)
+t_input		Module::getInput(int accept)
 {
-	//std::cout << "Module::getInput()" << std::endl; //debug
-    int	choice;
+	std::cerr << "Module::getInput():accept: " << accept << std::endl; //debug
+    static int	choice = -1;
+/*	char *tmp = nullptr;*/
 
-	if (!accept)
-		getch();
-	else {
-		choice = wgetch(this->_gameWindow);
+	/*wgetstr(this->_gameWindow, tmp);*/
+	/*while (wgetch(this->_gameWindow)) ;*/
+	/*(void)accept;*/
+/*	if (accept == 0)
+	{
+		lastChoice = -1;
+		while ((choice = wgetch(this->_gameWindow)) != ERR)
+		{
+			std::cerr << choice << std::endl;
+			lastChoice = choice;
+		}
+		ungetch(lastChoice);
+		return (NONE);
+	}*/
+	choice = wgetch(this->_gameWindow);
+	std::cerr << "B4choice: " << choice << std::endl;
+	if (accept == 1)
+	{
+		flushinp();
+		std::cerr << "acceptChoice: " << choice << std::endl;
 		switch(choice)
 		{
 			case KEY_UP:
@@ -125,6 +142,7 @@ t_input		Module::getInput(const bool accept)
 
 int		Module::updateDisplay(void)
 {
+	std::cerr << "Module::updateDisplay()" << std::endl; //debug
 	/*static unsigned int n = 0;*/
 	unsigned int 		x, y, newYMax, newXMax;
 

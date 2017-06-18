@@ -54,10 +54,9 @@ class Core {
 		struct sigaction	_oldSIGQUIT;
 		struct sigaction    _oldSIGINT;
         struct sigaction    _oldSIGSEGV;
-
-		void	_shutdown(int signal, siginfo_t *info, void *data);
-
 };
+
+void	_shutdown(int signal, siginfo_t *info, void *data);
 
 #endif /* CORE_HPP */
 
