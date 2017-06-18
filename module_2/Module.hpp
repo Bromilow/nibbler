@@ -23,30 +23,28 @@
 class Module : public IModule
 {
     public:
-        Module(GameEnvironment & data);
+        Module(Level & data);
         ~Module();
         Module(const Module & src);
         Module & operator=(const Module & rhs);
         
-        virtual t_input getInput(int accept);
-        virtual int     updateDisplay(void);
+        virtual int getInput(void);
+        virtual int updateDisplay(void);
 
-        GameEnvironment & gameData;
+        Level & levelData;
 
     private:
-        WINDOW              *_gameWindow;
-        WINDOW              *_infoWindow;
-        unsigned int        _terminal_W;
-        unsigned int        _terminal_H;
-        unsigned int        _padX;
-        unsigned int        _padY;
-        struct sigaction    _oldSIGWINCH;
-        int                 _choice;
-
+        WINDOW          *_gameWindow;
+        WINDOW          *_infoWindow;
+        unsigned int    _terminal_W;
+        unsigned int    _terminal_H;
+        unsigned int    _padX;
+        unsigned int    _padY;
+        sighandler_t    _oldSIGWINCH;
         
 };
 
-extern "C" IModule* create_module(GameEnvironment & data);
+extern "C" IModule* create_module(Level & data);
 extern "C" void     destroy_module(IModule* module);
 
 #endif /* MODULE_HPP */

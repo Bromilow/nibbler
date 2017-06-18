@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/09 12:43:57 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/14 18:04:30 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/17 21:20:08 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,7 @@
 # include <cstdlib>
 # include <iostream>
 # include <dlfcn.h>
-/*# include "IModule.hpp"*/
-# include "GameEnvironment.hpp"
+# include "Core.hpp"
 
 int     checkInput(int ac, char **av);
 int     main_menu(void);

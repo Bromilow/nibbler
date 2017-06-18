@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 13:39:38 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/12 13:40:43 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/16 14:55:13 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <curses.h>
 # include <iostream>
 
-# define MENU_H  6
+# define MENU_H  7
 # define MENU_W  10
 
 extern "C" int main_menu(void);

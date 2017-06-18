@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/09 12:43:32 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/15 13:31:18 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/17 21:22:15 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,36 +14,36 @@
 
 int     main(int argc, char **argv)
 {
-    if (!checkInput(argc, argv))
-        return (0);
-    else {
-        const char      *modules[3] = {"./module_1/lib1_NCurses.so", "./module_2/lib2_OpenGL.so", "./module_3/lib3_SDL.so"};
+    if (checkInput(argc, argv))
+    {
         int             menu_choice;
-        GameEnvironment *game;
-
-        // Display menu
-        menu_choice = main_menu();
-        std::cout << "You chose option : " << menu_choice << std::endl;
-
-        if (menu_choice > 0 && menu_choice < 4)
+        Core            *game;
+        bool            quit;
+        
+        quit = false;
+        while (!quit)
         {
-            // Set up player, map, and module handler
-            game = new GameEnvironment(std::atoi(argv[1]), std::atoi(argv[2]), modules[menu_choice - 1]);
-            
-            // Initialize graphic library
-            //game->moduleController->loadLibrary(modules[menu_choice - 1]);
+            // Display menu         // 0: EXIT    1: First Lib    2: Second Lib    3: Third Lib
+            menu_choice = main_menu();
+            std::cout << "You chose option : " << menu_choice << std::endl;
+            if (menu_choice <= 0)
+                quit = true;
+            else if (menu_choice > 0 && menu_choice < 4)
+            {
+                try {
+                    // Set up player, map, and module handler
+                    game = new Core(std::atoi(argv[1]), std::atoi(argv[2]), menu_choice - 1);
 
-            // Load game level
-            //game->moduleController->loadScene();
-
-            // Start game loop
-            game->gameLoop();
-
-            // Game has ended
-            delete game;
-            
-        } else {
-            // handle other menu options
+                    // Start game loop
+                    game->gameLoop();
+                    // Game has ended
+                    delete game;
+                }
+                catch (std::exception & e) {
+                    std::cerr << "ERROR: " << e.what() << std::endl;
+                    quit = true;
+                }          
+            }
         }
     }
     return (0);
@@ -53,26 +53,26 @@ int     checkInput(int ac, char **av)
 {
     if (ac != 3)
     {
-        std::cout << "error : invlid arguments. Try this:\n"
+        std::cerr << "error : invlid arguments. Try this:\n"
         << "make run   OR   ./nibbler width height\n" << std::endl;
         return (0);
     }
     else if (!(std::atoi(av[1]) || std::atoi(av[2])))
     {
         // error : map width and height not valid
-        std::cout << "error : map width and/or height not valid" << std::endl;
+        std::cerr << "error : map width and/or height not valid" << std::endl;
         return (0);
     }
     else if (!(std::atoi(av[1]) >= MIN_MAP_W && std::atoi(av[2]) >= MIN_MAP_H))
     {
         // error : map dimentions too small
-        std::cout << "error : map dimentions too small" << std::endl;
+        std::cerr << "error : map dimentions too small" << std::endl;
         return (0);
     }
     else if (!(std::atoi(av[1]) <= MAX_MAP_W && std::atoi(av[2]) <= MAX_MAP_H))
     {
         // error : map dimentions too large
-        std::cout << "error : map dimentions too large" << std::endl;
+        std::cerr << "error : map dimentions too large" << std::endl;
         return (0);
     }
     else
@@ -89,7 +89,7 @@ int     main_menu(void)
     // open the library
     void* handle = dlopen("./main_menu/lib0_MainMenu.so", RTLD_NOW);
     if (!handle) {
-        std::cerr << "Cannot open library: 'lib0_MainMenu.so'\nERROR : " << dlerror() << '\n';
+        std::cerr << dlerror() << std::endl;
         return (-1);
     }
     // reset errors
@@ -98,7 +98,7 @@ int     main_menu(void)
     menu_module = reinterpret_cast<main_menu_t>(dlsym(handle, "main_menu"));
     dlsym_error = dlerror();
     if (dlsym_error) {
-        std::cerr << "Cannot load symbol 'main_menu': " << dlsym_error << '\n';
+        std::cerr << dlsym_error << std::endl;
         dlclose(handle);
         return (-1);
     }

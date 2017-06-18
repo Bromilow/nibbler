@@ -1,117 +1,92 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   GameEnvironment.hpp                                :+:      :+:    :+:   */
+/*   GameEnvironment.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/06/11 15:42:18 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/15 17:03:33 by kbam7            ###   ########.fr       */
+/*   Created: 2017/06/13 18:39:02 by kbam7             #+#    #+#             */
+/*   Updated: 2017/06/17 14:50:20 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _GAME_ENVIRONMENT_HPP
-# define _GAME_ENVIRONMENT_HPP
+#ifndef GAME_ENVIRONMENT_HPP
+# define GAME_ENVIRONMENT_HPP
 
-/*# include <curses.h>
-# include <string>
-# include <cstdio>
-# include <cstdlib>
-# include <ctime>
-*/
-
-# include "Level.hpp"
-# include "ModuleController.hpp"
-
-# define MIN_MAP_W    		0
-# define MIN_MAP_H    		0
-# define MAX_MAP_W    		225
-# define MAX_MAP_H    		68
-# define DEFAULT_GAME_FPS	60
-# define ONE_NANOSEC		1000000000
-
-class Snake {
-
-};
-
-class GameEnvironment {
-
-	public:
-		GameEnvironment(const unsigned int w, const unsigned int h, const char *filename);
-		GameEnvironment(GameEnvironment const & src);
-		GameEnvironment & operator=(GameEnvironment const & rhs);
-		~GameEnvironment(void);
-
-		Snake*				player;				/* score, position, direction, (size/length)*/
-		Level*				levelData;			/* map array, food, food position */
-		ModuleController*	moduleController;	/* load, initialize, manage, uninitialize, unload library */
-		unsigned int		gameFPS;			/* default: 60fps (ONE_NANOSEC/60)     */
-		unsigned int		gameSpeed;			/* gameSpeed = (ONE_NANOSEC / gameFPS) / 100; gameSpeed *= 100; gameSpeed is now rounded to hundreds */
-
-		int     gameLoop(void);
-
-	private:
-		GameEnvironment(void);
-
-};
-
-#endif /* _GAME_ENVIRONMENT_HPP */
+/* map array, food */
 
 /*
-# include <string>
-# include "Level.hpp"
-# include "Player.hpp"
+    You can generate food by getting the area of the map, generating a random
+    number within the area size and then placing food at thhat position.
+    To get the random position on the map, you will need to take the random number, 
+    divide it by the map-width to get the row and use the remainder as positioning on the row.
 
-# define DEFAULT_SPEED	1.0f
-# define SPEED_INC		30.0f
-# define MAX_SPEED		0.10f
-# define MULTINOM_RATE	10
+    EXAMPLE:
+        map_area = map_w * map_h; (map_area = 8 * 6)
+        rand_pos = rand() % map_area;
+        food_row = rand_pos / 8;
+        food_col = rand_pos % 8;
+        map[food_row][food_col] = MAP_FOOD;
+*/
 
-class GraphicsHandler;
+# include <cstdlib>
+# include <ctime>
 
-typedef enum		e_action
-{
-	NONE = 0,
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT,
-	PAUSE,
-	QUIT,
-	LIB1,
-	LIB2,
-	LIB3
-}					t_action;
+# define MAP_NONE       0
+# define MAP_WALL       1
+# define MAP_FOOD       2
+# define MAP_PLAYER     10
+# define MAP_MAX_FOOD   3
 
-class Snake
-{
+typedef enum    e_input {
+    NONE = 0,
+    UP,
+    RIGHT,
+    DOWN,
+    LEFT,
+    QUIT,
+    PAUSE,
+    MOD1,
+    MOD2,
+    MOD3,
+    SUPACHOMP,
+}               t_input;
+
+class GameEnvironment {
 public:
-	static Snake *		instance;
-	Level *				level;
-	Player				player;
-	float				speed;
-	bool				paused;
-	float				clockCountdown;
-	bool				stop;
-	GraphicsHandler *	ghandler;
+    GameEnvironment(const unsigned int w, const unsigned int h);
+	GameEnvironment(GameEnvironment const & src);
+	GameEnvironment & operator=(GameEnvironment const & rhs);
+	~GameEnvironment(void);
+    
+    unsigned int    **map;
+    unsigned int    mapWidth;
+    unsigned int    mapHeight;
+    unsigned int    snakeLength;  
+    unsigned int    snakeLocation;
+    t_input         snakeDirection;
+    unsigned int    foodLocation[MAP_MAX_FOOD];
+    unsigned int    foodCount;
+    bool            paused;
+    bool            supachomp;
+    bool            snakeAlive;
+    unsigned int	gameTime;
 
-	Snake();
-	~Snake();
+/*    unsigned int    getMapWidth(void) const;
+    unsigned int    getMapHeight(void) const;*/
+    void            changeSnakeDir(t_input action);
+    void            generateFood(const int amount);
 
-	void				loadLevel(unsigned, unsigned);
-	void				loadLevel(const std::string);
-	void				loadLibrary(const std::string);
-	void				startLevel();
-	void				gameOver();
-	void				generateNom();
-	void				generateNom(unsigned);
-	void				removeNoms();
-	void				launch();
-	void				update();
-	void				handleAction();
-	void				dump(bool = false) const;
+    void            updateMapData(void);
+    unsigned int    moveToNextBlock(void);
+    unsigned int    checkPlayerCollision(unsigned int x, unsigned int y);
+    void            gameOver(void);
+
+    /*unsigned int    spawnFood();*/
+
+    /*int loadNewMap(const unsigned int w, const unsigned int h);*/
+
+private:
 };
 
-#endif
-
-*/
+#endif /* GAME_ENVIRONMENT_HPP */
