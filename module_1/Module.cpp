@@ -23,8 +23,10 @@ Module::Module(GameEnvironment & data) : gameData(data),  _choice(-1)
 	getmaxyx(stdscr, this->_terminal_H, this->_terminal_W);
 
 	// Get padding to center map in terminal
-	this->_padX = (this->_terminal_W - this->gameData.mapWidth) / 2;
-	this->_padY = (this->_terminal_H - this->gameData.mapHeight) / 2;
+	//this->_padX = (this->_terminal_W / 2) - (this->gameData.mapWidth / 2); //  (this->_terminal_W / 2) - (this->gameData.mapWidth / 2)
+	//this->_padY = (this->_terminal_H / 2) - (this->gameData.mapHeight / 2);
+	this->_padX = 0; //  (this->_terminal_W / 2) - (this->gameData.mapWidth / 2)
+	this->_padY = 0;
 
 	// Game area
 	this->_gameWindow = newwin(this->_terminal_H - INFO_WIN_H, this->_terminal_W, INFO_WIN_H, 0);
@@ -169,8 +171,8 @@ int		Module::updateDisplay(void)
 		mvwin(this->_gameWindow, newYMax - INFO_WIN_H , 0);
 
 		// Update padding
-		this->_padX = (newXMax - this->gameData.mapWidth) / 2;
-		this->_padY = (newYMax - this->gameData.mapHeight) / 2;
+		//this->_padX = (this->_terminal_W / 2) - (this->gameData.mapWidth / 2); //  (this->_terminal_W / 2) - (this->gameData.mapWidth / 2)
+		//this->_padY = (this->_terminal_H / 2) - (this->gameData.mapHeight / 2);
 
 		// Update dimensions
 		this->_terminal_W = newXMax;
@@ -193,7 +195,7 @@ int		Module::updateDisplay(void)
 
 
 	mvwprintw(this->_infoWindow,1,1, "Time : %d\n", this->gameData.gameTime);
-	mvwprintw(this->_infoWindow,2,1, "your score is %d", this->gameData.snakeLength );
+	mvwprintw(this->_infoWindow,2,1, "your score is %d", this->gameData.snakeLength - 4);
 
 	for (y = 0; y < this->gameData.mapHeight; ++y)
 	{

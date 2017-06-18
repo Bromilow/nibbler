@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-LIB			= lib1_NCurses.so
+LIB			= lib2_NCurses.so
 
 SRCS		= Module.cpp
 OBJS		= $(SRCS:%.cpp=%.o)

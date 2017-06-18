@@ -13,7 +13,8 @@
 #-- Names of items to make
 PROG		= nibbler
 MOD_MENU	= lib0_MainMenu.so
-MOD_NCRS	= lib1_NCurses.so
+MOD1		= lib1_NCurses.so
+MOD2		= lib2_NCurses.so
 
 #-- Core Program
 CORE_SRC	= core/src
@@ -32,7 +33,7 @@ CXXFLAGS	= $(WFLAGS) $(INCLUDES)
 .PHONY: clean fclean re run
 
 #-- RULES --#
-all: $(MOD_NCRS) $(MOD_MENU) $(PROG)
+all: $(MOD_MENU) $(MOD1) $(MOD2) $(PROG)
 
 #-- Core Program
 $(CORE_SRC)/%.o : $(CORE_SRC)/%.cpp
@@ -48,15 +49,18 @@ $(MOD_MENU) :
 	@$(MAKE) -s -C main_menu/
 
 #-- NCurses Module
-$(MOD_NCRS):
+$(MOD1):
 	@$(MAKE) -s -C module_1/
 
-#-- OpenGL Module
+#-- NCurses Module 2
+$(MOD2):
+	@$(MAKE) -s -C module_2/
 #-- SDL Module
 
 #-- General rules
 clean:
 	@rm -f $(OBJS)
+	@rm -f ./outerr.txt
 	@echo "\033[01;36m$(PROG) \t\t-- \033[00;32mREMOVED OBJECT FILES\033[0m"
 
 fclean: clean
@@ -64,6 +68,7 @@ fclean: clean
 	@echo "\033[01;36m$(PROG) \t\t-- \033[00;32mREMOVED EXECUTABLE\033[0m\n"
 	@$(MAKE) -s -C main_menu/ fclean
 	@$(MAKE) -s -C module_1/ fclean
+	@$(MAKE) -s -C module_2/ fclean
 
 re: fclean all
 
