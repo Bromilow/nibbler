@@ -6,7 +6,7 @@
 #    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/09 03:17:50 by kbam7             #+#    #+#              #
-#    Updated: 2017/06/17 18:13:30 by kbam7            ###   ########.fr        #
+#    Updated: 2017/06/21 12:37:57 by kbam7            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -73,6 +73,7 @@ fclean: clean
 	@$(MAKE) -s -C main_menu/ fclean
 	@$(MAKE) -s -C module_1/ fclean
 	@$(MAKE) -s -C module_2/ fclean
+	@$(MAKE) -s -C module_3/ fclean
 
 re: fclean all
 
