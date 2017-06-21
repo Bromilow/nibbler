@@ -15,6 +15,7 @@ PROG		= nibbler
 MOD_MENU	= lib0_MainMenu.so
 MOD1		= lib1_NCurses.so
 MOD2		= lib2_NCurses.so
+MOD3		= lib3_NCurses.so
 
 #-- Core Program
 CORE_SRC	= core/src
@@ -33,7 +34,7 @@ CXXFLAGS	= $(WFLAGS) $(INCLUDES)
 .PHONY: clean fclean re run
 
 #-- RULES --#
-all: $(MOD_MENU) $(MOD1) $(MOD2) $(PROG)
+all: $(MOD_MENU) $(MOD1) $(MOD2) $(MOD3) $(PROG)
 
 #-- Core Program
 $(CORE_SRC)/%.o : $(CORE_SRC)/%.cpp
@@ -55,7 +56,10 @@ $(MOD1):
 #-- NCurses Module 2
 $(MOD2):
 	@$(MAKE) -s -C module_2/
-#-- SDL Module
+
+#-- NCurses Modue 3
+$(MOD3):
+	@$(MAKE) -s -C module_3/
 
 #-- General rules
 clean:

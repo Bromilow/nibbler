@@ -1,4 +1,23 @@
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include "Module.hpp"
 
 Module::Module(GameEnvironment & data) : gameData(data),  _choice(-1)
@@ -13,6 +32,13 @@ Module::Module(GameEnvironment & data) : gameData(data),  _choice(-1)
 	cbreak();
 	curs_set(0);
 	nodelay(stdscr, true);
+
+	start_color();
+	init_pair(1, COLOR_BLACK, COLOR_GREEN);
+	init_pair(2, COLOR_BLACK, COLOR_RED);
+	init_pair(3, COLOR_BLACK, COLOR_YELLOW);
+	init_pair(4, COLOR_BLACK, COLOR_CYAN);
+	init_pair(5, COLOR_BLACK, COLOR_MAGENTA);
 
 	// Refresh and clear stdscr
 	clear();
@@ -192,11 +218,32 @@ int		Module::updateDisplay(void)
 	wclear(this->_infoWindow);
 	wclear(this->_gameWindow);
 
+	static int i = 0;
+	int a;
+
 
 	mvwprintw(this->_infoWindow,1,1, "Time : %d\n", this->gameData.gameTime);
 	mvwprintw(this->_infoWindow,2,1, "your score is %d", this->gameData.snakeLength - 4);
+	a = 0;
 
-	for (y = 0; y < this->gameData.mapHeight; ++y)
+/*
+.__   __.  __  .______   .______    __       _______ .______      
+|  \ |  | |  | |   _  \  |   _  \  |  |     |   ____||   _  \     
+|   \|  | |  | |  |_)  | |  |_)  | |  |     |  |__   |  |_)  |    
+|  . `  | |  | |   _  <  |   _  <  |  |     |   __|  |      /     
+|  |\   | |  | |  |_)  | |  |_)  | |  `----.|  |____ |  |\  \----.
+|__| \__| |__| |______/  |______/  |_______||_______|| _| `._____|
+*/
+
+	for (; a != 3; a++)
+	{
+		mvwprintw(this->_infoWindow,1 ,20, "()  () (----) |^^^) |^^^) ||     |---- (^^^)");
+		mvwprintw(this->_infoWindow,2 ,20, "(-) ()   ||   |--B  |--B  ||     |--   (><)");
+		mvwprintw(this->_infoWindow,3 ,20, "() (-) (----) |___) |___) |||||  |____ |   \\");
+	}
+
+
+	for (y = 0; y < this->gameData.mapHeight; ++y)	
 	{
 		x = 0;
 		//wmove(this->_gameWindow, y + this->_padY, x + this->_padX);
@@ -205,36 +252,57 @@ int		Module::updateDisplay(void)
 			switch (this->gameData.map[y][x])
 			{
 				case MAP_NONE:
-					mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "   ");
-					mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "   ");
+					wattron(this->_gameWindow, COLOR_PAIR(1));
+					mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "    ");
+					mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "    ");
+					wattroff(this->_gameWindow, COLOR_PAIR(1));
 					break;
 				case MAP_WALL:
-					mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "# #");
-					mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "# #");
+					mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "####");
+					mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "####");
 					break;
 				case MAP_FOOD:
-					mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "YUM");
-					mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "YUM");
+					
+					if ((i % 2) == 0)
+					{
+						wattron(this->_gameWindow, COLOR_PAIR(5));
+						mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "    ");
+						mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "CHOW");
+						wattroff(this->_gameWindow, COLOR_PAIR(5));
+						i++;
+					}
+					else if ((i % 2) == 1)
+					{
+						wattron(this->_gameWindow, COLOR_PAIR(5));
+						mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "CHOW");
+						mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "    ");
+						wattroff(this->_gameWindow, COLOR_PAIR(5));
+						i++;
+					}
 					break;
 				case MAP_PLAYER:
 					wattron(this->_gameWindow, A_REVERSE);
-					mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "   ");
-					mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "   ");
+					mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "    ");
+					mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "    ");
 					wattroff(this->_gameWindow, A_REVERSE);
 					break;
 			}
 			if (this->gameData.map[y][x] == this->gameData.snakeLength + 9)
 			{
 				// its the tail
-				mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, ". .");
-				mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, ". .");
+				wattron(this->_gameWindow, COLOR_PAIR(4));
+				mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "....");
+				mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "....");
+				wattroff(this->_gameWindow, COLOR_PAIR(4));
 			}
 			else if ((this->gameData.map[y][x] > MAP_PLAYER) &&
 				(this->gameData.map[y][x] < this->gameData.snakeLength + 9))
 			{
 				// its the body
-				mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "o o");
-				mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "o o");
+				wattron(this->_gameWindow, COLOR_PAIR(4));
+				mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "oooo");
+				mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "oooo");
+				wattroff(this->_gameWindow, COLOR_PAIR(4));
 			}
 		}
 		//wprintw(this->_gameWindow, "\n");

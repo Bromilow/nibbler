@@ -32,7 +32,7 @@ Core::Core(const unsigned int w, const unsigned int h, const int lib)
     sigaction(SIGSEGV, &newAct, &this->_oldSIGSEGV);
 
     // Setup module paths
-    const char *tmp[N_MODULES] = {"./module_1/lib1_NCurses.so", "./module_2/lib2_NCurses.so", "./module_3/lib3_SDL.so"};
+    const char *tmp[N_MODULES] = {"./module_1/lib1_NCurses.so", "./module_2/lib2_NCurses.so", "./module_3/lib3_NCurses.so"};
     for (int i = 0; i < N_MODULES; ++i)
         this->modulePaths[i] = tmp[i];
 

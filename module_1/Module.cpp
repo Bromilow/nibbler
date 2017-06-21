@@ -1,5 +1,3 @@
-
-
 #include "Module.hpp"
 
 Module::Module(GameEnvironment & data) : gameData(data),  _choice(-1)
@@ -25,8 +23,8 @@ Module::Module(GameEnvironment & data) : gameData(data),  _choice(-1)
 	// Get padding to center map in terminal
 	//this->_padX = (this->_terminal_W / 2) - (this->gameData.mapWidth / 2); //  (this->_terminal_W / 2) - (this->gameData.mapWidth / 2)
 	//this->_padY = (this->_terminal_H / 2) - (this->gameData.mapHeight / 2);
-	this->_padX = 0; //  (this->_terminal_W / 2) - (this->gameData.mapWidth / 2)
-	this->_padY = 0;
+	this->_padX = 1; //  (this->_terminal_W / 2) - (this->gameData.mapWidth / 2)
+	this->_padY = 1;
 
 	// Game area
 	this->_gameWindow = newwin(this->_terminal_H - INFO_WIN_H, this->_terminal_W, INFO_WIN_H, 0);
