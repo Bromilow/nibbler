@@ -32,11 +32,18 @@
 # include <cstdlib>
 # include <ctime>
 
-# define MAP_NONE       0
-# define MAP_WALL       1
-# define MAP_FOOD       2
-# define MAP_PLAYER     10
-# define MAP_MAX_FOOD   3
+# define MIN_MAP_W    		0
+# define MIN_MAP_H    		0
+# define MAX_MAP_W    		225
+# define MAX_MAP_H    		68
+# define DEFAULT_GAME_FPS	2
+# define ONE_NANOSEC		1000000000
+# define N_MODULES			3
+# define MAP_NONE           0
+# define MAP_WALL           1
+# define MAP_FOOD           2
+# define MAP_PLAYER         10
+# define MAP_MAX_FOOD       3
 
 typedef enum    e_input {
     NONE = 0,
@@ -71,12 +78,15 @@ public:
     bool            supachomp;
     bool            snakeAlive;
     unsigned int	gameTime;
+    unsigned int	gameFPS;			/* default: 60fps     */
+	unsigned int	gameSpeed;			/* gameSpeed = (ONE_NANOSEC / gameFPS) / 100; gameSpeed *= 100; gameSpeed is now rounded to hundreds */
 
 /*    unsigned int    getMapWidth(void) const;
     unsigned int    getMapHeight(void) const;*/
     void            changeSnakeDir(t_input action);
     void            generateFood(const int amount);
-
+    void            increaseGameSpeed(void);
+    void            decreaseGameSpeed(void);
     void            updateMapData(void);
     unsigned int    moveToNextBlock(void);
     unsigned int    checkPlayerCollision(unsigned int x, unsigned int y);

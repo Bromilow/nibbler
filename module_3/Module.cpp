@@ -1,14 +1,22 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Module.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/06/18 21:30:48 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/23 13:53:01 by kbamping         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include "Module.hpp"
 
@@ -24,7 +32,14 @@ Module::Module(GameEnvironment & data) : gameData(data),  _choice(-1)
 	cbreak();
 	curs_set(0);
 	nodelay(stdscr, true);
-	
+
+	start_color();
+	init_pair(1, COLOR_BLACK, COLOR_GREEN);
+	init_pair(2, COLOR_BLACK, COLOR_RED);
+	init_pair(3, COLOR_BLACK, COLOR_YELLOW);
+	init_pair(4, COLOR_BLACK, COLOR_CYAN);
+	init_pair(5, COLOR_BLACK, COLOR_MAGENTA);
+
 	// Refresh and clear stdscr
 	clear();
 	refresh();
@@ -33,9 +48,9 @@ Module::Module(GameEnvironment & data) : gameData(data),  _choice(-1)
 	getmaxyx(stdscr, this->_terminal_H, this->_terminal_W);
 
 	// Get padding to center map in terminal
-	//this->_padX = (this->_terminal_W / 2) - (this->gameData.mapWidth / 2); //  (this->_terminal_W / 2) - (this->gameData.mapWidth / 2)
-	//this->_padY = (this->_terminal_H / 2) - (this->gameData.mapHeight / 2);
-	this->_padX = 1; //  (this->_terminal_W / 2) - (this->gameData.mapWidth / 2)
+	//this->_padX = (this->_terminal_W / 2) - (this->gameData.mapWidth + this->gameData.mapWidth / 2); //  (this->_terminal_W / 2) - (this->gameData.mapWidth / 2)
+	//this->_padY = (this->_terminal_H / 2) - (this->gameData.mapHeight);
+	this->_padX = 1;
 	this->_padY = 1;
 
 	// Game area
@@ -159,7 +174,7 @@ int		Module::updateDisplay(void)
 
 	// Get terminal size
 	getmaxyx(stdscr, newYMax, newXMax);
-	if (newXMax <= this->gameData.mapWidth + 5 || newYMax <= this->gameData.mapHeight + 10)
+	if (newXMax <= this->gameData.mapWidth * 2 + 5 || newYMax <= this->gameData.mapHeight * 2 + 10)
 	{
 		wclear(stdscr);
 		wclear(this->_infoWindow);    
@@ -168,7 +183,7 @@ int		Module::updateDisplay(void)
 		wrefresh(stdscr);
 		wrefresh(this->_infoWindow);
 		wrefresh(this->_gameWindow);
-		return (1);
+		return (0);
 	}
 	if (newXMax != this->_terminal_W || newYMax != this->_terminal_H)
 	{
@@ -181,8 +196,8 @@ int		Module::updateDisplay(void)
 		mvwin(this->_gameWindow, newYMax - INFO_WIN_H , 0);
 
 		// Update padding
-		//this->_padX = (this->_terminal_W / 2) - (this->gameData.mapWidth / 2); //  (this->_terminal_W / 2) - (this->gameData.mapWidth / 2)
-		//this->_padY = (this->_terminal_H / 2) - (this->gameData.mapHeight / 2);
+		//this->_padX = (this->_terminal_W / 2) - (this->gameData.mapWidth + this->gameData.mapWidth / 2); //  (this->_terminal_W / 2) - (this->gameData.mapWidth / 2)
+		//this->_padY = (this->_terminal_H / 2) - (this->gameData.mapHeight);
 
 		// Update dimensions
 		this->_terminal_W = newXMax;
@@ -203,49 +218,94 @@ int		Module::updateDisplay(void)
 	wclear(this->_infoWindow);
 	wclear(this->_gameWindow);
 
+	static int i = 0;
+	int a;
+
 
 	mvwprintw(this->_infoWindow,1,1, "Time : %d\n", this->gameData.gameTime);
 	mvwprintw(this->_infoWindow,2,1, "your score is %d", this->gameData.snakeLength - 4);
+	a = 0;
 
-	for (y = 0; y < this->gameData.mapHeight; ++y)
+/*
+.__   __.  __  .______   .______    __       _______ .______      
+|  \ |  | |  | |   _  \  |   _  \  |  |     |   ____||   _  \     
+|   \|  | |  | |  |_)  | |  |_)  | |  |     |  |__   |  |_)  |    
+|  . `  | |  | |   _  <  |   _  <  |  |     |   __|  |      /     
+|  |\   | |  | |  |_)  | |  |_)  | |  `----.|  |____ |  |\  \----.
+|__| \__| |__| |______/  |______/  |_______||_______|| _| `._____|
+*/
+
+	for (; a != 3; a++)
+	{
+		mvwprintw(this->_infoWindow,1 ,20, "()  () (----) |^^^) |^^^) ||     |---- (^^^)");
+		mvwprintw(this->_infoWindow,2 ,20, "(-) ()   ||   |--B  |--B  ||     |--   (><)");
+		mvwprintw(this->_infoWindow,3 ,20, "() (-) (----) |___) |___) |||||  |____ |   \\");
+	}
+
+
+	for (y = 0; y < this->gameData.mapHeight; ++y)	
 	{
 		x = 0;
-		wmove(this->_gameWindow, y + this->_padY, x + this->_padX);
+		//wmove(this->_gameWindow, y + this->_padY, x + this->_padX);
 		for (; x < this->gameData.mapWidth; ++x)
 		{
 			switch (this->gameData.map[y][x])
 			{
 				case MAP_NONE:
-					wprintw(this->_gameWindow, "  ");
+					wattron(this->_gameWindow, COLOR_PAIR(1));
+					mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "    ");
+					mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "    ");
+					wattroff(this->_gameWindow, COLOR_PAIR(1));
 					break;
 				case MAP_WALL:
-					wprintw(this->_gameWindow, "# ");
+					mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "####");
+					mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "####");
 					break;
 				case MAP_FOOD:
-					wprintw(this->_gameWindow, "X ");
+					
+					if ((i % 2) == 0)
+					{
+						wattron(this->_gameWindow, COLOR_PAIR(5));
+						mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "    ");
+						mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "CHOW");
+						wattroff(this->_gameWindow, COLOR_PAIR(5));
+						i++;
+					}
+					else if ((i % 2) == 1)
+					{
+						wattron(this->_gameWindow, COLOR_PAIR(5));
+						mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "CHOW");
+						mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "    ");
+						wattroff(this->_gameWindow, COLOR_PAIR(5));
+						i++;
+					}
 					break;
 				case MAP_PLAYER:
-					waddch(this->_gameWindow, ACS_DIAMOND);
-					waddch(this->_gameWindow, ' ');
+					wattron(this->_gameWindow, A_REVERSE);
+					mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "    ");
+					mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "    ");
+					wattroff(this->_gameWindow, A_REVERSE);
 					break;
 			}
 			if (this->gameData.map[y][x] == this->gameData.snakeLength + 9)
 			{
 				// its the tail
-				wprintw(this->_gameWindow, ". ");
-				/*if (this->gameData.snakeDirection % 2)
-					wprintw(this->_gameWindow, "|");
-				else
-					wprintw(this->_gameWindow, "-");*/
+				wattron(this->_gameWindow, COLOR_PAIR(4));
+				mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "....");
+				mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "....");
+				wattroff(this->_gameWindow, COLOR_PAIR(4));
 			}
 			else if ((this->gameData.map[y][x] > MAP_PLAYER) &&
 				(this->gameData.map[y][x] < this->gameData.snakeLength + 9))
 			{
 				// its the body
-				wprintw(this->_gameWindow, "o ");
+				wattron(this->_gameWindow, COLOR_PAIR(4));
+				mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "oooo");
+				mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "oooo");
+				wattroff(this->_gameWindow, COLOR_PAIR(4));
 			}
 		}
-		wprintw(this->_gameWindow, "\n");
+		//wprintw(this->_gameWindow, "\n");
 	}
 
 	box(this->_infoWindow, 0, 0);

@@ -24,14 +24,6 @@
 # include "ModuleController.hpp"
 # include <signal.h>
 
-# define MIN_MAP_W    		0
-# define MIN_MAP_H    		0
-# define MAX_MAP_W    		225
-# define MAX_MAP_H    		68
-# define DEFAULT_GAME_FPS	3
-# define ONE_NANOSEC		1000000000
-# define N_MODULES			3
-
 class Core {
 
 	public:
@@ -43,8 +35,6 @@ class Core {
 		GameEnvironment*	gameData;			/* map array, food, food position */
 		ModuleController*	moduleController;	/* load, initialize, manage, uninitialize, unload library */
 		const char			*modulePaths[N_MODULES];
-		unsigned int		gameFPS;			/* default: 60fps     */
-		unsigned int		gameSpeed;			/* gameSpeed = (ONE_NANOSEC / gameFPS) / 100; gameSpeed *= 100; gameSpeed is now rounded to hundreds */
 
 		int     gameLoop(void);
 		void	loadNewModule(const char *libPath);

@@ -20,8 +20,7 @@ Core::Core(void)
     //std::cout << "Core::Default constructor" << std::endl; //debug
 }
 
-Core::Core(const unsigned int w, const unsigned int h, const int lib) :
-    gameFPS(DEFAULT_GAME_FPS)
+Core::Core(const unsigned int w, const unsigned int h, const int lib)
 {
     // Change signal signal handling
     struct sigaction    newAct;
@@ -33,14 +32,10 @@ Core::Core(const unsigned int w, const unsigned int h, const int lib) :
     sigaction(SIGSEGV, &newAct, &this->_oldSIGSEGV);
 
     // Setup module paths
-    const char *tmp[N_MODULES] = {"./module_1/lib1_NCurses.so", "./module_2/lib2_OpenGL.so", "./module_3/lib3_SDL.so"};
+    const char *tmp[N_MODULES] = {"./module_1/lib1_NCurses.so", "./module_2/lib2_NCurses.so", "./module_3/lib3_NCurses.so"};
     for (int i = 0; i < N_MODULES; ++i)
         this->modulePaths[i] = tmp[i];
 
-    // Set gameSpeed. Round to nearest 100th (16666600 by default)
-    this->gameSpeed = ((ONE_NANOSEC / this->gameFPS) / 100) * 100;
-
-    //std::cout << "Core::Parameterized constructor" << std::endl; //debug
     this->gameData = new GameEnvironment(w, h);
 
     this->moduleController = new ModuleController(*(this->gameData));
@@ -102,7 +97,7 @@ int     Core::gameLoop(void)
             diff = ONE_NANOSEC - _oldNanoSec;
             _oldNanoSec = 0;
         }
-        if ((diff + timeNow.tv_nsec - _oldNanoSec) >= this->gameSpeed) // 1 sec / FPS 
+        if ((diff + timeNow.tv_nsec - _oldNanoSec) >= this->gameData->gameSpeed) // 1 sec / FPS 
         {
             _oldNanoSec = timeNow.tv_nsec;
             diff = 0;
@@ -146,7 +141,8 @@ int     Core::gameLoop(void)
                 this->gameData->updateMapData();
             }
             // Update display
-            this->moduleController->module->updateDisplay();
+            if (!this->moduleController->module->updateDisplay())
+                this->gameData->paused = true;
         }
         // Read input, but dont accept it yet
         this->moduleController->module->getInput(0);

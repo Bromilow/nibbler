@@ -3,17 +3,19 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
+#    By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/09 03:17:50 by kbam7             #+#    #+#              #
-#    Updated: 2017/06/18 21:27:38 by kbam7            ###   ########.fr        #
+#    Updated: 2017/06/23 13:52:13 by kbamping         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 #-- Names of items to make
 PROG		= nibbler
 MOD_MENU	= lib0_MainMenu.so
-MOD_NCRS	= lib1_NCurses.so
+MOD1		= lib1_NCurses.so
+MOD2		= lib2_NCurses.so
+MOD3		= lib3_NCurses.so
 
 #-- Core Program
 CORE_SRC	= core/src
@@ -32,7 +34,7 @@ CXXFLAGS	= $(WFLAGS) $(INCLUDES)
 .PHONY: clean fclean re run
 
 #-- RULES --#
-all: $(MOD_NCRS) $(MOD_MENU) $(PROG)
+all: $(MOD_MENU) $(MOD1) $(MOD2) $(MOD3) $(PROG)
 
 #-- Core Program
 $(CORE_SRC)/%.o : $(CORE_SRC)/%.cpp
@@ -48,16 +50,21 @@ $(MOD_MENU) :
 	@$(MAKE) -s -C main_menu/
 
 #-- NCurses Module
-$(MOD_NCRS):
+$(MOD1):
 	@$(MAKE) -s -C module_1/
 
-#-- OpenGL Module
-#-- SDL Module
+#-- NCurses Module 2
+$(MOD2):
+	@$(MAKE) -s -C module_2/
+
+#-- NCurses Modue 3
+$(MOD3):
+	@$(MAKE) -s -C module_3/
 
 #-- General rules
 clean:
 	@rm -f $(OBJS)
-	@rm -f outerr.txt
+	@rm -f ./outerr.txt
 	@echo "\033[01;36m$(PROG) \t\t-- \033[00;32mREMOVED OBJECT FILES\033[0m"
 
 fclean: clean
@@ -65,6 +72,8 @@ fclean: clean
 	@echo "\033[01;36m$(PROG) \t\t-- \033[00;32mREMOVED EXECUTABLE\033[0m\n"
 	@$(MAKE) -s -C main_menu/ fclean
 	@$(MAKE) -s -C module_1/ fclean
+	@$(MAKE) -s -C module_2/ fclean
+	@$(MAKE) -s -C module_3/ fclean
 
 re: fclean all
 

@@ -14,11 +14,14 @@
 #include <iostream> //debug
 
 GameEnvironment::GameEnvironment(const unsigned int w, const unsigned int h)
-    : mapWidth(w), mapHeight(h), snakeLength(4), snakeDirection(UP),
-    foodCount(3), paused(false), supachomp(false), snakeAlive(true), gameTime(0)
+    : mapWidth(w), mapHeight(h), snakeLength(4), snakeDirection(UP), foodCount(3),
+        paused(false), supachomp(false), snakeAlive(true), gameTime(0), gameFPS(DEFAULT_GAME_FPS)
 {
     // Seed rand
     srand(time(0));
+
+    // Set gameSpeed. Round to nearest 100th (16666600 by default)
+    this->gameSpeed = ((ONE_NANOSEC / this->gameFPS) / 100) * 100;
 
     // Create map height
     map = new unsigned int*[h];
@@ -112,6 +115,24 @@ void            GameEnvironment::changeSnakeDir(t_input action)
         this->snakeDirection = action;
 }
 
+void            GameEnvironment::increaseGameSpeed(void)
+{
+    if (this->gameFPS < 25)
+    {
+        this->gameFPS++;
+        this->gameSpeed = ((ONE_NANOSEC / this->gameFPS) / 100) * 100;
+    }
+}
+
+void            GameEnvironment::decreaseGameSpeed(void)
+{
+    if (this->gameFPS > 1)
+    {
+        this->gameFPS--;
+        this->gameSpeed = ((ONE_NANOSEC / this->gameFPS) / 100) * 100;
+    }
+}
+
 void            GameEnvironment::updateMapData(void)
 {
     unsigned int x, y;
@@ -129,6 +150,8 @@ void            GameEnvironment::updateMapData(void)
     }
     if (!(this->moveToNextBlock()))
         this->gameOver();
+    else if (this->snakeLength % 10 == 0)
+        this->increaseGameSpeed();
 }
 
 unsigned int    GameEnvironment::moveToNextBlock(void)
@@ -155,7 +178,6 @@ unsigned int    GameEnvironment::moveToNextBlock(void)
         this->map[y][x] = MAP_PLAYER;
         this->snakeLocation = (y * this->mapWidth) + (x + 1);
     }
-
 /*    std::cerr << "1-snakeLocation: " << this->snakeLocation << "  mapWidth: " << this->mapWidth << "  x: " << x << "  y: " << y << std::endl;
     std::cerr << "\t0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20\n";
     for (j = 0; j < this->mapHeight; ++j)
@@ -169,7 +191,6 @@ unsigned int    GameEnvironment::moveToNextBlock(void)
         std::cerr << "\n";
     }
     std::cerr << "\n";*/
-
     return(1);     
 }
 
@@ -191,7 +212,6 @@ unsigned int    GameEnvironment::checkPlayerCollision(unsigned int x, unsigned i
             if (this->foodLocation[i] == pos)
                 this->foodLocation[i] = 0;
         }
-
         // regen food
         this->generateFood(this->foodCount);
 
