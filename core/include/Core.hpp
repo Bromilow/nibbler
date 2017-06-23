@@ -23,6 +23,13 @@
 # include "GameEnvironment.hpp"
 # include "ModuleController.hpp"
 # include <signal.h>
+# include <time.h>
+# include <sys/time.h>
+
+# ifdef __MACH__
+#  include <mach/clock.h>
+#  include <mach/mach.h>
+# endif
 
 class Core {
 
@@ -38,6 +45,7 @@ class Core {
 
 		int     gameLoop(void);
 		void	loadNewModule(const char *libPath);
+		void	current_utc_time(struct timespec *ts);
 
 	private:
 		Core(void);
