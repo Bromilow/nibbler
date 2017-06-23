@@ -6,7 +6,7 @@
 #    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/09 03:17:50 by kbam7             #+#    #+#              #
-#    Updated: 2017/06/17 18:13:30 by kbam7            ###   ########.fr        #
+#    Updated: 2017/06/18 21:27:38 by kbam7            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -57,6 +57,7 @@ $(MOD_NCRS):
 #-- General rules
 clean:
 	@rm -f $(OBJS)
+	@rm -f outerr.txt
 	@echo "\033[01;36m$(PROG) \t\t-- \033[00;32mREMOVED OBJECT FILES\033[0m"
 
 fclean: clean
