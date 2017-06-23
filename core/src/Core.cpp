@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Core.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/11 14:25:39 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/18 21:30:03 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/23 14:41:28 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
-#include <ctime>
+//#include <ctime>
 #include "Core.hpp"
 #include "ModuleController.hpp"
 
@@ -82,13 +82,15 @@ int     Core::gameLoop(void)
     t_input         action;
     int             diff;
 
-    clock_gettime(CLOCK_REALTIME, &timeNow);
+    //clock_gettime(CLOCK_REALTIME, &timeNow);
+    current_utc_time(&timeNow);
     _oldNanoSec = timeNow.tv_nsec;
     _oldSec  = timeNow.tv_sec;
     diff = 0;
     while (this->gameData->snakeAlive)
     {
-        clock_gettime(CLOCK_REALTIME, &timeNow);
+        //clock_gettime(CLOCK_REALTIME, &timeNow);
+        current_utc_time(&timeNow);
         if ((timeNow.tv_sec - _oldSec) > 0)
         {
             if (!this->gameData->paused)
@@ -158,6 +160,22 @@ void	Core::loadNewModule(const char *libPath)
     this->moduleController->loadLibrary(libPath);
 }
 
+void    Core::current_utc_time(struct timespec *ts) {
+
+#ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
+  clock_serv_t cclock;
+  mach_timespec_t mts;
+
+  host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+  clock_get_time(cclock, &mts);
+  mach_port_deallocate(mach_task_self(), cclock);
+  ts->tv_sec = mts.tv_sec;
+  ts->tv_nsec = mts.tv_nsec;
+#else
+  clock_gettime(CLOCK_REALTIME, ts);
+#endif
+
+}
 
 void	_shutdown(int signal, siginfo_t *info, void *data)
 {

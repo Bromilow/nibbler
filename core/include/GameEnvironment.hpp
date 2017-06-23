@@ -3,31 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   GameEnvironment.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/13 18:39:02 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/18 21:29:46 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/23 14:52:34 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GAME_ENVIRONMENT_HPP
 # define GAME_ENVIRONMENT_HPP
-
-/* map array, food */
-
-/*
-    You can generate food by getting the area of the map, generating a random
-    number within the area size and then placing food at thhat position.
-    To get the random position on the map, you will need to take the random number, 
-    divide it by the map-width to get the row and use the remainder as positioning on the row.
-
-    EXAMPLE:
-        map_area = map_w * map_h; (map_area = 8 * 6)
-        rand_pos = rand() % map_area;
-        food_row = rand_pos / 8;
-        food_col = rand_pos % 8;
-        map[food_row][food_col] = MAP_FOOD;
-*/
 
 # include <cstdlib>
 # include <ctime>
