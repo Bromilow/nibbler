@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/13 18:39:02 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/23 14:52:34 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/06/23 15:00:47 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define GAME_ENVIRONMENT_HPP
 
 # include <cstdlib>
-# include <ctime>
+//# include <ctime>
 
 # define MIN_MAP_W    		0
 # define MIN_MAP_H    		0
