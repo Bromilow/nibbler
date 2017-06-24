@@ -3,14 +3,14 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
+#    By: rbromilo <rbromilo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/09 03:17:50 by kbam7             #+#    #+#              #
-#    Updated: 2017/06/16 12:22:58 by kbam7            ###   ########.fr        #
+#    Updated: 2017/06/24 19:36:24 by rbromilo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-LIB			= lib3_NCurses.so
+LIB			= lib4_SDL.so
 
 SRCS		= Module.cpp
 OBJS		= $(SRCS:%.cpp=%.o)
@@ -18,7 +18,15 @@ OBJS		= $(SRCS:%.cpp=%.o)
 INCLUDES	= -I ../core/include
 CXX			= clang++
 CXXFLAGS	= -Wall -Wextra -Werror -g3 -std=c++11 -fPIC
-LDFLAGS		= -shared -fPIC -lncurses
+
+if (!(sdl2-config --cflags --clibs))
+{
+	echo "installing brew";
+}
+else
+	echo "brew installed";
+
+LDFLAGS		= -I../../../../include -L../../../../lib
 
 .PHONY: clean fclean re
 

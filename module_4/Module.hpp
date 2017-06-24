@@ -13,7 +13,7 @@
 #ifndef MODULE_HPP
 # define MODULE_HPP
 
-# include <curses.h>
+# include <SDL.h>
 # include <iostream>
 # include <signal.h>
 # include "IModule.hpp"
@@ -36,8 +36,9 @@ class Module : public IModule
     private:
         WINDOW              *_gameWindow;
         WINDOW              *_infoWindow;
-        unsigned int        _terminal_W;
-        unsigned int        _terminal_H;
+
+        unsigned int        _window_W;
+        unsigned int        _window_H;
         unsigned int        _padX;
         unsigned int        _padY;
         struct sigaction    _oldSIGWINCH;

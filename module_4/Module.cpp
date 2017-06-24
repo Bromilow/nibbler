@@ -1,72 +1,69 @@
 
 #include "Module.hpp"
 
+#define TILE_SIZE  32
+
 Module::Module(GameEnvironment & data) : gameData(data),  _choice(-1)
 {
-	sigaction(SIGWINCH, NULL, &this->_oldSIGWINCH);
-	//std::cout << "Module::Default constructor" << std::endl; //debug
-	this->_terminal_H = 0;
-	this->_terminal_W = 0;
+	//	sigaction(SIGWINCH, NULL, &this->_oldSIGWINCH);
 
-	initscr();
-	noecho();
-	cbreak();
-	curs_set(0);
-	nodelay(stdscr, true);
+	this->_window_H = 0;
+	this->_window_W = 0;
 
-	start_color();
-	init_pair(1, COLOR_BLACK, COLOR_GREEN);
-	init_pair(2, COLOR_BLACK, COLOR_RED);
-	init_pair(3, COLOR_BLACK, COLOR_YELLOW);
-	init_pair(4, COLOR_BLACK, COLOR_CYAN);
-	init_pair(5, COLOR_BLACK, COLOR_MAGENTA);
+	SDL_Window *window;
+    SDL_Renderer *renderer;
 
 	// Refresh and clear stdscr
 	clear();
 	refresh();
 
 	// Get max X and Y
-	getmaxyx(stdscr, this->_terminal_H, this->_terminal_W);
+	getmaxyx(stdscr, this->_window_H, this->_window_W);
 
-	// Get padding to center map in terminal
-	//this->_padX = (this->_terminal_W / 2) - (this->gameData.mapWidth + this->gameData.mapWidth / 2); //  (this->_terminal_W / 2) - (this->gameData.mapWidth / 2)
-	//this->_padY = (this->_terminal_H / 2) - (this->gameData.mapHeight);
 	this->_padX = 1;
 	this->_padY = 1;
 
 	// Game area
-	this->_gameWindow = newwin(this->_terminal_H - INFO_WIN_H, this->_terminal_W, INFO_WIN_H, 0);
-	/*box(this->_gameWindow, 0, 0);*/
-	nodelay(this->_gameWindow, true);
-	keypad(this->_gameWindow, true);
+	
+	    this->gameWindow = SDL_CreateWindowAndRenderer(this->_window_H, this->_window_W, SDL_WINDOW_RESIZABLE, &window, &renderer);
+	
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);  //display what has been rendered
 
-	// Scrolling in window
-	/*idlok(this->_gameWindow, true);
-	scrollok(this->_gameWindow, true);*/
+	atexit(SDL_Quit);
 
-	// Info bar
-	this->_infoWindow = newwin(INFO_WIN_H, this->_terminal_W, 0, 0);
-	/*box(this->_infoWindow, 0, 0);*/
-	nodelay(this->_infoWindow, true);
+	SDL_Renderer* renderer = NULL;
+	SDL_Surface*  field_surface = NULL;
+	SDL_Surface*  fruit_surface = NULL;
+	SDL_Surface*  shead_surface = NULL;
+	SDL_Surface*  snake_surface = NULL;
+	SDL_Texture*  field_texture = NULL;
+	SDL_Texture*  fruit_texture = NULL;
+	SDL_Texture*  shead_texture = NULL;
+	SDL_Texture*  snake_texture = NULL;
 
-	wrefresh(this->_gameWindow);
-	wrefresh(this->_infoWindow);
-	// Refresh stdscr
+    fruit_surface = SDL_LoadBMP("apple.bmp");
+    shead_surface = SDL_LoadBMP("head.bmp");
+    snake_surface = SDL_LoadBMP("snake.bmp");
+    field_surface = SDL_LoadBMP("field.bmp");
+    fruit_texture = SDL_CreateTextureFromSurface(renderer, fruit_surface);
+    shead_texture = SDL_CreateTextureFromSurface(renderer, shead_surface);
+    snake_texture = SDL_CreateTextureFromSurface(renderer, snake_surface);
+    field_texture = SDL_CreateTextureFromSurface(renderer, field_surface);
+
 	refresh();
 }
 
 Module::~Module()
 {
-	//std::cout << "Module::Destructor" << std::endl; //debug
-	delwin(this->_gameWindow);
-	delwin(this->_infoWindow);
-	endwin();
-	sigaction(SIGWINCH, &this->_oldSIGWINCH, NULL);
+	SDL_DestroyTexture(texture);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
 }
 
 Module::Module(const Module & src) : gameData(src.gameData)
 {
-	//std::cout << "Module::Copy constructor" << std::endl; //debug
 	*this = src;
 }
 
@@ -74,29 +71,73 @@ Module & Module::operator=(const Module & rhs)
 {
 	//std::cout << "Module::Assignation Operator" << std::endl; //debug
 	this->_gameWindow = rhs._gameWindow;
-	this->_infoWindow = rhs._infoWindow;
-	this->_terminal_W = rhs._terminal_W;
-	this->_terminal_H = rhs._terminal_H;
+	this->_window_W = rhs._window_W;
+	this->_window_H = rhs._window_H;
 
 	return (*this);
 }
 
+
+
 // Member functions
 t_input		Module::getInput(int accept)
 {
-    int	choice;
 
-	choice = wgetch(this->_gameWindow);
-	//std::cerr << "B4-1:\nchoice: " << choice << "\n_choice: " << this->_choice << std::endl;
+	SDL_Event event;
+//	const Uint8 *state = SDL_GetKeyboardState(NULL);                     a different way to check key input
+// 	SDL_PumpEvents();
+
+    if( SDL_Init( SDL_INIT_VIDEO ) < 0){
+        fprintf( stderr, "Could not initialise SDL: %s\n", SDL_GetError() );
+        exit( -1 );
+    }
+
+	if( !SDL_SetVideoMode( 320, 200, 0, 0 ) ){
+        fprintf( stderr, "Could not set video mode: %s\n", SDL_GetError() );
+        SDL_Quit();
+        exit( -1 );
+    }
+
+	SDL_EnableUNICODE( 1 );
+
+	while( SDL_PollEvent( &event ) ){           
+        switch( event.type ){
+            case SDLK_KEYUP:
+				return UP;
+			case SDLK_KEYDOWN:
+				return DOWN;
+            case SDLK_KEYLEFT:
+				return LEFT;
+			case SDLK_KEYRIGHT:
+				return RIGHT;
+			case SDLK_KEYQ:
+				return QUIT;
+			case SDLK_KEYP:
+				return PAUSE;
+			case SDLK_KEY1:
+				return MOD1;
+			case SDLK_KEY2:
+				return MOD2;
+			case SDLK_KEY3:
+				return MOD3;
+
+            case SDLK_QUIT:
+                quit = 1;
+                break;
+
+            default:
+                break;
+        }
+	}
+
 	if (choice != -1 && this->_choice != choice)
-		this->_choice = choice;
-	//std::cerr << "B4-2:\nchoice: " << choice << "\n_choice: " << this->_choice << std::endl;
+		this->_choice = event;
 	if (accept == 1)
 	{
 		choice = this->_choice;
 		this->_choice = -1;
 		if (this->gameData.paused)
-			switch(choice)
+			switch(event.type)
 			{
 				case 27:
 				case 'q':
@@ -196,32 +237,7 @@ int		Module::updateDisplay(void)
 		return(1);
 	}
 
-	wclear(this->_infoWindow);
-	wclear(this->_gameWindow);
-
-	static int i = 0;
-	int a;
-
-
-	mvwprintw(this->_infoWindow,1,1, "Time : %d\n", this->gameData.gameTime);
-	mvwprintw(this->_infoWindow,2,1, "your score is %d", this->gameData.snakeLength - 4);
-	a = 0;
-
-/*
-.__   __.  __  .______   .______    __       _______ .______      
-|  \ |  | |  | |   _  \  |   _  \  |  |     |   ____||   _  \     
-|   \|  | |  | |  |_)  | |  |_)  | |  |     |  |__   |  |_)  |    
-|  . `  | |  | |   _  <  |   _  <  |  |     |   __|  |      /     
-|  |\   | |  | |  |_)  | |  |_)  | |  `----.|  |____ |  |\  \----.
-|__| \__| |__| |______/  |______/  |_______||_______|| _| `._____|
-*/
-
-	for (; a != 3; a++)
-	{
-		mvwprintw(this->_infoWindow,1 ,20, "()  () (----) |^^^) |^^^) ||     |---- (^^^)");
-		mvwprintw(this->_infoWindow,2 ,20, "(-) ()   ||   |--B  |--B  ||     |--   (><)");
-		mvwprintw(this->_infoWindow,3 ,20, "() (-) (----) |___) |___) |||||  |____ |   \\");
-	}
+	clear(this->_gameWindow);
 
 
 	for (y = 0; y < this->gameData.mapHeight; ++y)	
@@ -233,89 +249,66 @@ int		Module::updateDisplay(void)
 			switch (this->gameData.map[y][x])
 			{
 				case MAP_NONE:
-					wattron(this->_gameWindow, COLOR_PAIR(1));
-					mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "    ");
-					mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "    ");
-					wattroff(this->_gameWindow, COLOR_PAIR(1));
 					break;
 				case MAP_WALL:
-					mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "####");
-					mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "####");
+					SDL_Rect rect;
+   					rect.h = TILE_SIZE;
+  					rect.w = TILE_SIZE;
+  					rect.x = x * TILE_SIZE;
+  					rect.y = y * TILE_SIZE;
+  					SDL_RenderCopy(renderer, field_surface, NULL, &rect);
 					break;
 				case MAP_FOOD:
-					
-					if ((i % 2) == 0)
-					{
-						wattron(this->_gameWindow, COLOR_PAIR(5));
-						mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "    ");
-						mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "CHOW");
-						wattroff(this->_gameWindow, COLOR_PAIR(5));
-						i++;
-					}
-					else if ((i % 2) == 1)
-					{
-						wattron(this->_gameWindow, COLOR_PAIR(5));
-						mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "CHOW");
-						mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "    ");
-						wattroff(this->_gameWindow, COLOR_PAIR(5));
-						i++;
-					}
+    				SDL_Rect rect;
+    				rect.h = TILE_SIZE;
+    				rect.w = TILE_SIZE;
+    				rect.x = x * TILE_SIZE;
+    				rect.y = y * TILE_SIZE;
+    				SDL_RenderCopy(renderer, fruit_texture, NULL, &rect);
 					break;
 				case MAP_PLAYER:
-					wattron(this->_gameWindow, A_REVERSE);
-					mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "    ");
-					mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "    ");
-					wattroff(this->_gameWindow, A_REVERSE);
+					SDL_Rect rect;
+   					rect.h = TILE_SIZE;
+  					rect.w = TILE_SIZE;
+  					rect.x = x * TILE_SIZE;
+  					rect.y = y * TILE_SIZE;
+  					SDL_RenderCopy(renderer, shead_texture, NULL, &rect);
 					break;
 			}
 			if (this->gameData.map[y][x] == this->gameData.snakeLength + 9)
 			{
-				// its the tail
-				wattron(this->_gameWindow, COLOR_PAIR(4));
-				mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "....");
-				mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "....");
-				wattroff(this->_gameWindow, COLOR_PAIR(4));
+				SDL_Rect rect;
+    			rect.h = TILE_SIZE;
+    			rect.w = TILE_SIZE;
+    			rect.x = x * TILE_SIZE;
+    			rect.y = y * TILE_SIZE;
+    			SDL_RenderCopy(renderer, snake_surface, NULL, &rect);
 			}
 			else if ((this->gameData.map[y][x] > MAP_PLAYER) &&
 				(this->gameData.map[y][x] < this->gameData.snakeLength + 9))
 			{
-				// its the body
-				wattron(this->_gameWindow, COLOR_PAIR(4));
-				mvwprintw(this->_gameWindow, (y * 2)  + this->_padY, (x * 4) + this->_padX, "oooo");
-				mvwprintw( this->_gameWindow, (y * 2) + 1  + this->_padY, (x * 4) + this->_padX, "oooo");
-				wattroff(this->_gameWindow, COLOR_PAIR(4));
+				SDL_Rect rect;
+    			rect.h = TILE_SIZE;
+    			rect.w = TILE_SIZE;
+    			rect.x = x * TILE_SIZE;
+    			rect.y = y * TILE_SIZE;
+    			SDL_RenderCopy(renderer, snake_surface, NULL, &rect);
 			}
 		}
-		//wprintw(this->_gameWindow, "\n");
 	}
 
-	box(this->_infoWindow, 0, 0);
-	box(this->_gameWindow, 0, 0);
-
-
-	// Update virtual screen
-	wnoutrefresh(this->_infoWindow);
-	wnoutrefresh(this->_gameWindow);
-
-
-	// update physical screen
-	doupdate();
+	SDL_RenderPresent(renderer);
 
 	return (1);
 }
 
-// Class factories
-// Need to add type def for class factories --- http://www.tldp.org/HOWTO/C++-dlopen/thesolution.html#AEN216
 IModule*	create_module(GameEnvironment & data) 
 {
-	//std::cout << "Module::Class Factory::create_module()" << std::endl; //debug
-	/*(void)data;*/
 	return new Module(data);
 }
 
 void		destroy_module(IModule* module)
 {
-	//std::cout << "Module::Class Factory::delete_module()" << std::endl; //debug
 	delete module;
 	std::cout << "Module::Class Factory::delete_module()::MODULE DELETED" << std::endl; //debug
 
