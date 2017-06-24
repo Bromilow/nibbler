@@ -3,42 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   ModuleController.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/11 20:08:54 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/17 18:13:30 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/23 19:23:20 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ModuleController.hpp"
 
-/*IModule*    ModuleController::module = NULL;*/
-
 ModuleController::ModuleController(GameEnvironment & data) : input(NONE), gameData(data)
-{
-    //std::cout << "ModuleController::Parameterized constructor" << std::endl;
-}
+{}
 
 ModuleController::ModuleController(ModuleController const & src) : input(NONE), gameData(src.gameData)
 {
-    //std::cout << "ModuleController::Copy constructor" << std::endl;
     *this = src;
 }
 
 ModuleController & ModuleController::operator=(ModuleController const & rhs)
 {
-    //std::cout << "ModuleController::Assignation Operator" << std::endl;
     if (this != &rhs)
     {
         this->module = rhs.module;
+        this->input = rhs.input;
+        this->gameData = rhs.gameData;
         this->_destroy_module = rhs._destroy_module;
+        this->_handle = rhs._handle;
     }
     return (*this);
 }
 
 ModuleController::~ModuleController(void)
 {
-    //std::cout << "ModuleController::Destructor" << std::endl;
     if (module != NULL)
         _destroy_module(module);
     dlclose(_handle);
@@ -46,16 +42,13 @@ ModuleController::~ModuleController(void)
 
 int     ModuleController::loadLibrary(const char *filename)
 {
-    //std::cout << "ModuleController::loadLibrary()" << std::endl;
     createModule_t  create_module;
 
     _handle = dlopen(filename, RTLD_NOW | RTLD_GLOBAL);
-    
     if (!_handle) {
         std::cerr << dlerror() << std::endl;;
         throw ModuleCannotOpen();
     }
-
     // Clear any errors
     dlerror();
 
@@ -65,7 +58,6 @@ int     ModuleController::loadLibrary(const char *filename)
     this->_destroy_module = reinterpret_cast<destroyModule_t>(this->loadSymbol(_handle, "destroy_module"));
     if (this->_destroy_module != NULL)
     {
-        // Create module
         this->module = create_module(this->gameData);
         return (1);
     }
@@ -74,7 +66,6 @@ int     ModuleController::loadLibrary(const char *filename)
 
 void*   ModuleController::loadSymbol(void *handle, const char *symName)
 {
-    //std::cout << "ModuleController::loadSymbol()" << std::endl;
     const char  *dlsym_error;
     void*       symbol = NULL;
     

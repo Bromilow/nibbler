@@ -6,7 +6,7 @@
 #    By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/09 03:17:50 by kbam7             #+#    #+#              #
-#    Updated: 2017/06/23 13:52:13 by kbamping         ###   ########.fr        #
+#    Updated: 2017/06/24 10:02:25 by kbamping         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -81,7 +81,7 @@ run:
 	@rm -f $(PROG)
 	@echo "\033[01;36m$(PROG) \t\t-- \033[00;32mREMOVED EXECUTABLE\033[0m\n"
 	@$(MAKE) -s all
-	./$(PROG) 30 30 2> outerr.txt
+	./$(PROG) 20 20
 
 run_valgrind:
-	valgrind --leak-check=full --show-reachable=yes ./nibbler 17 30
+	valgrind --leak-check=full --show-reachable=yes ./nibbler 20 20

@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/13 18:39:02 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/23 15:00:47 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/06/23 19:19:28 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define GAME_ENVIRONMENT_HPP
 
 # include <cstdlib>
-//# include <ctime>
+# include <time.h>
 
 # define MIN_MAP_W    		0
 # define MIN_MAP_H    		0
@@ -44,43 +44,35 @@ typedef enum    e_input {
 }               t_input;
 
 class GameEnvironment {
-public:
-    GameEnvironment(const unsigned int w, const unsigned int h);
-	GameEnvironment(GameEnvironment const & src);
-	GameEnvironment & operator=(GameEnvironment const & rhs);
-	~GameEnvironment(void);
-    
-    unsigned int    **map;
-    unsigned int    mapWidth;
-    unsigned int    mapHeight;
-    unsigned int    snakeLength;  
-    unsigned int    snakeLocation;
-    t_input         snakeDirection;
-    unsigned int    foodLocation[MAP_MAX_FOOD];
-    unsigned int    foodCount;
-    bool            paused;
-    bool            supachomp;
-    bool            snakeAlive;
-    unsigned int	gameTime;
-    unsigned int	gameFPS;			/* default: 60fps     */
-	unsigned int	gameSpeed;			/* gameSpeed = (ONE_NANOSEC / gameFPS) / 100; gameSpeed *= 100; gameSpeed is now rounded to hundreds */
+    public:
+        GameEnvironment(const unsigned int w, const unsigned int h);
+        GameEnvironment(GameEnvironment const & src);
+        GameEnvironment & operator=(GameEnvironment const & rhs);
+        ~GameEnvironment(void);
+        
+        unsigned int    **map;
+        unsigned int    mapWidth;
+        unsigned int    mapHeight;
+        unsigned int    snakeLength;  
+        unsigned int    snakeLocation;
+        t_input         snakeDirection;
+        unsigned int    foodLocation[MAP_MAX_FOOD];
+        unsigned int    foodCount;
+        bool            paused;
+        bool            supachomp;
+        bool            snakeAlive;
+        unsigned int	gameTime;
+        unsigned int	gameFPS;
+        unsigned int	gameSpeed;
 
-/*    unsigned int    getMapWidth(void) const;
-    unsigned int    getMapHeight(void) const;*/
-    void            changeSnakeDir(t_input action);
-    void            generateFood(const int amount);
-    void            increaseGameSpeed(void);
-    void            decreaseGameSpeed(void);
-    void            updateMapData(void);
-    unsigned int    moveToNextBlock(void);
-    unsigned int    checkPlayerCollision(unsigned int x, unsigned int y);
-    void            gameOver(void);
-
-    /*unsigned int    spawnFood();*/
-
-    /*int loadNewMap(const unsigned int w, const unsigned int h);*/
-
-private:
+        void            changeSnakeDir(t_input action);
+        void            generateFood(const int amount);
+        void            increaseGameSpeed(void);
+        void            decreaseGameSpeed(void);
+        void            updateMapData(void);
+        unsigned int    moveToNextBlock(void);
+        unsigned int    checkPlayerCollision(unsigned int x, unsigned int y);
+        void            gameOver(void);
 };
 
 #endif /* GAME_ENVIRONMENT_HPP */

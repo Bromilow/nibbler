@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/23 17:21:28 by kbamping          #+#    #+#             */
-/*   Updated: 2017/06/23 17:21:29 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/06/24 14:22:11 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,12 @@ class Module : public IModule
         struct sigaction    _oldSIGWINCH;
         int                 _choice;
 
-        
+        t_input _handleInput(int choice);
+        int     _screenTooSmall(void);
+        void    _resizeWindow(unsigned int newYMax, unsigned int newXmax);
+        int     _gameIsPaused(void);
+        void    _updateInfoWindow(void);
+        void    _updateGameWindow(void);
 };
 
 extern "C" IModule* create_module(GameEnvironment & data);
