@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/09 12:43:57 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/17 21:20:08 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/23 19:17:38 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 # include <iostream>
 # include <dlfcn.h>
 # include "Core.hpp"
+
+typedef int (*main_menu_t)();
 
 int     checkInput(int ac, char **av);
 int     main_menu(void);

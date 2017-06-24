@@ -6,23 +6,20 @@
 /*   By: rbromilo <rbromilo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/11 14:25:39 by kbam7             #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2017/06/24 19:31:48 by rbromilo         ###   ########.fr       */
+=======
+/*   Updated: 2017/06/23 19:18:11 by kbamping         ###   ########.fr       */
+>>>>>>> 164cea5d288435d58395309b3bfdf4e27e2a08bb
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-//#include <ctime>
 #include "Core.hpp"
 #include "ModuleController.hpp"
 
-Core::Core(void)
-{
-    //std::cout << "Core::Default constructor" << std::endl; //debug
-}
-
 Core::Core(const unsigned int w, const unsigned int h, const int lib)
 {
-    // Change signal signal handling
+    // Change signal handling
     struct sigaction    newAct;
 
     newAct.sa_sigaction = &_shutdown;
@@ -37,33 +34,29 @@ Core::Core(const unsigned int w, const unsigned int h, const int lib)
         this->modulePaths[i] = tmp[i];
 
     this->gameData = new GameEnvironment(w, h);
-
     this->moduleController = new ModuleController(*(this->gameData));
     this->moduleController->loadLibrary(this->modulePaths[lib]);
 }
 
 Core::Core(Core const & src)
 {
-    //std::cout << "Core::Copy constructor" << std::endl;  //debug
     *this = src;
 }
 
 Core & Core::operator=(Core const & rhs)
 {
-    //std::cout << "Core::Assignation operator" << std::endl;  //debug
     if (this != &rhs)
     {
         this->gameData = rhs.gameData;
         this->moduleController = rhs.moduleController;
-        /*this->width = rhs.width;
-        this->height = rhs.height;*/
+        for (int i = 0; i < N_MODULES; ++i)
+            this->modulePaths[i] = rhs.modulePaths[i];
     }
     return (*this);
 }
 
 Core::~Core(void)
 {
-    //std::cout << "Core::Destructor" << std::endl;  //debug
     if (this->moduleController != NULL)
         delete this->moduleController;
     if (this->gameData != NULL)
@@ -79,17 +72,14 @@ int     Core::gameLoop(void)
     long            _oldNanoSec;
     time_t          _oldSec;
     struct timespec timeNow;
-    t_input         action;
     int             diff;
 
-    //clock_gettime(CLOCK_REALTIME, &timeNow);
     current_utc_time(&timeNow);
     _oldNanoSec = timeNow.tv_nsec;
     _oldSec  = timeNow.tv_sec;
     diff = 0;
     while (this->gameData->snakeAlive)
     {
-        //clock_gettime(CLOCK_REALTIME, &timeNow);
         current_utc_time(&timeNow);
         if ((timeNow.tv_sec - _oldSec) > 0)
         {
@@ -99,49 +89,17 @@ int     Core::gameLoop(void)
             diff = ONE_NANOSEC - _oldNanoSec;
             _oldNanoSec = 0;
         }
-        if ((diff + timeNow.tv_nsec - _oldNanoSec) >= this->gameData->gameSpeed) // 1 sec / FPS 
+        if ((diff + timeNow.tv_nsec - _oldNanoSec) >= this->gameData->gameSpeed)
         {
             _oldNanoSec = timeNow.tv_nsec;
             diff = 0;
 
-            action = this->moduleController->module->getInput(1);
-            switch (action)
-            {
-                case UP:
-                case DOWN:
-                case LEFT:
-                case RIGHT:
-                    this->gameData->changeSnakeDir(action);
-                    break;
-                case QUIT:
-                    return (0);
-                case PAUSE:
-                    this->gameData->paused = !this->gameData->paused;
-                    break;
-                case MOD1:
-                    this->loadNewModule(this->modulePaths[0]);
-                    break;
-                case MOD2:
-                    // load new module
-                    this->loadNewModule(this->modulePaths[1]);
-                    break;
-                case MOD3:
-                    // load new module
-                    this->loadNewModule(this->modulePaths[2]);
-                    break;
-                case SUPACHOMP:
-                    // do stuff
-                    this->gameData->supachomp = true;
-                    break;
-                case NONE:
-                    break;
-            }
+            if (!handleAction(this->moduleController->module->getInput(1)))
+                return (0);
 
             if (!this->gameData->paused)
-            {
-                // Update position and gamestate according to input (left, right, pause, exit, main menu)
                 this->gameData->updateMapData();
-            }
+                
             // Update display
             if (!this->moduleController->module->updateDisplay())
                 this->gameData->paused = true;
@@ -158,6 +116,42 @@ void	Core::loadNewModule(const char *libPath)
         delete this->moduleController;
     this->moduleController = new ModuleController(*(this->gameData));
     this->moduleController->loadLibrary(libPath);
+}
+
+int     Core::handleAction(t_input action)
+{
+    switch (action)
+    {
+        case UP:
+        case DOWN:
+        case LEFT:
+        case RIGHT:
+            this->gameData->changeSnakeDir(action);
+            break;
+        case QUIT:
+            return (0);
+        case PAUSE:
+            this->gameData->paused = !this->gameData->paused;
+            break;
+        case MOD1:
+            this->loadNewModule(this->modulePaths[0]);
+            break;
+        case MOD2:
+            // load new module
+            this->loadNewModule(this->modulePaths[1]);
+            break;
+        case MOD3:
+            // load new module
+            this->loadNewModule(this->modulePaths[2]);
+            break;
+        case SUPACHOMP:
+            // do stuff
+            this->gameData->supachomp = true;
+            break;
+        case NONE:
+            break;
+    }
+    return (1);
 }
 
 void    Core::current_utc_time(struct timespec *ts) {

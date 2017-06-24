@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/09 12:43:32 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/17 21:22:15 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/23 19:18:14 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ int     main(int argc, char **argv)
                 try {
                     // Set up player, map, and module handler
                     game = new Core(std::atoi(argv[1]), std::atoi(argv[2]), menu_choice - 1);
-
                     // Start game loop
                     game->gameLoop();
                     // Game has ended
@@ -81,11 +80,10 @@ int     checkInput(int ac, char **av)
 
 int     main_menu(void)
 {
-    typedef int (*main_menu_t)();
     main_menu_t         menu_module;
     const char          *dlsym_error;
     int                 menu_choice;
-
+    
     // open the library
     void* handle = dlopen("./main_menu/lib0_MainMenu.so", RTLD_NOW);
     if (!handle) {
