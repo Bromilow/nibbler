@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/18 21:30:48 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/24 13:46:33 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/06/25 13:31:45 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,8 @@ t_input		Module::_handleInput(int choice)
 			case KEY_LEFT:
 			case KEY_RIGHT:
 			case ' ':
+			case 'a':
+			case 'z':
 			default:
 				return NONE;
 		}
@@ -139,6 +141,10 @@ t_input		Module::_handleInput(int choice)
 			return MOD3;
 		case ' ':
 			return SUPACHOMP;
+		case 'a':
+			return INCR_SPD;
+		case 'z':
+			return DECR_SPD;
 		default:
 			return NONE;
 	}
@@ -153,7 +159,7 @@ int		Module::updateDisplay(void)
 	getmaxyx(stdscr, newYMax, newXMax);
 
 	// Check game state
-	if (newXMax <= this->gameData.mapWidth + 5 || newYMax <= this->gameData.mapHeight + 10)
+	if (newXMax <= this->gameData.mapWidth * 2 + 5 || newYMax <= this->gameData.mapHeight + 10)
 		return (this->_screenTooSmall());
 	if (newXMax != this->_terminal_W || newYMax != this->_terminal_H)
 		this->_resizeWindow(newYMax, newXMax);
@@ -193,7 +199,7 @@ int     Module::_screenTooSmall(void)
 	wrefresh(stdscr);
 	wrefresh(this->_infoWindow);
 	wrefresh(this->_gameWindow);
-	return (1);
+	return (0);
 }
 
 void    Module::_resizeWindow(unsigned int newYMax, unsigned int newXMax)
@@ -220,13 +226,14 @@ int     Module::_gameIsPaused(void)
 	wrefresh(stdscr);
 	wrefresh(this->_infoWindow);
 	wrefresh(this->_gameWindow);
-	return(1);
+	return(0);
 }
 
 void    Module::_updateInfoWindow(void)
 {
-	mvwprintw(this->_infoWindow,1,1, "Time : %d\n", this->gameData.gameTime);
-	mvwprintw(this->_infoWindow,2,1, "your score is %d", this->gameData.snakeLength - 4);
+	mvwprintw(this->_infoWindow, 1, 1, "Time\t: %d\n", this->gameData.gameTime);
+	mvwprintw(this->_infoWindow, 2, 1, "Score\t: %d", this->gameData.snakeLength - 4);
+	mvwprintw(this->_infoWindow, 3, 1, "gameFPS\t: %d", this->gameData.gameFPS);
 }
 
 void    Module::_updateGameWindow(void)

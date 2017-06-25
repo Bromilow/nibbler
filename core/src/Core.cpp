@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Core.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rbromilo <rbromilo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/11 14:25:39 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/25 08:36:23 by rbromilo         ###   ########.fr       */
+/*   Updated: 2017/06/25 16:05:49 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,12 @@ int     Core::handleAction(t_input action)
         case SUPACHOMP:
             // do stuff
             this->gameData->supachomp = true;
+            break;
+        case INCR_SPD:
+            this->gameData->setGameSpeed(this->gameData->gameFPS + 1);
+            break;
+        case DECR_SPD:
+            this->gameData->setGameSpeed(this->gameData->gameFPS - 1);
             break;
         case NONE:
             break;
