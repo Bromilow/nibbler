@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/18 21:30:48 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/25 13:31:45 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/06/25 18:04:18 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,8 +231,8 @@ int     Module::_gameIsPaused(void)
 
 void    Module::_updateInfoWindow(void)
 {
-	mvwprintw(this->_infoWindow, 1, 1, "Time\t: %d\n", this->gameData.gameTime);
-	mvwprintw(this->_infoWindow, 2, 1, "Score\t: %d", this->gameData.snakeLength - 4);
+	mvwprintw(this->_infoWindow, 1, 1, "Time\t\t: %d\n", this->gameData.gameTime);
+	mvwprintw(this->_infoWindow, 2, 1, "Score\t\t: %d", this->gameData.snakeLength - 4);
 	mvwprintw(this->_infoWindow, 3, 1, "gameFPS\t: %d", this->gameData.gameFPS);
 }
 
