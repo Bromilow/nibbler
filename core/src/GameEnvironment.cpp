@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   GameEnvironment.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/18 21:30:11 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/18 21:30:13 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/25 13:30:32 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GameEnvironment.hpp"
-#include <iostream> //debug
 
 GameEnvironment::GameEnvironment(const unsigned int w, const unsigned int h)
     : mapWidth(w), mapHeight(h), snakeLength(4), snakeDirection(UP), foodCount(3),
@@ -20,32 +19,23 @@ GameEnvironment::GameEnvironment(const unsigned int w, const unsigned int h)
     // Seed rand
     srand(time(0));
 
-    // Set gameSpeed. Round to nearest 100th (16666600 by default)
+    // Set gameSpeed. Round to nearest 100th
     this->gameSpeed = ((ONE_NANOSEC / this->gameFPS) / 100) * 100;
 
     // Create map height
     map = new unsigned int*[h];
 
     for (unsigned int y = 0; y < h; ++y) {
-        // Create new row
         map[y] = new unsigned int[w];
-
         // Add scenery to row
         for (unsigned int x = 0; x < w; ++x) {
-            // If sides of map,
-            if (y == 0 || y == (h - 1) || x == 0 || x == (w - 1)) {
-                // Assign wall/boundary
+            if (y == 0 || y == (h - 1) || x == 0 || x == (w - 1))
                 map[y][x] = MAP_WALL;
-            } else if (y == (h / 2) && x == (w / 2)) {
-                // Center of map, assign player start position
+            else if (y == (h / 2) && x == (w / 2)) {
                 this->snakeLocation = (y * w) + (x + 1);
                 map[y][x] = MAP_PLAYER;
-                /*for (int i = 1; i <= 4 && y + i < h; ++i)
-                    map[y + i][x] = MAP_PLAYER + i;*/
-            } else {
-                // Assign empty block
+            } else
                 map[y][x] = MAP_NONE;
-            }
         }
     }
 
@@ -60,9 +50,7 @@ GameEnvironment::GameEnvironment(const unsigned int w, const unsigned int h)
 GameEnvironment::GameEnvironment(GameEnvironment const & src)
 {
     if (this != &src)
-    {
         *this = src;
-    }
 }
 
 GameEnvironment & GameEnvironment::operator=(GameEnvironment const & rhs)
@@ -75,10 +63,15 @@ GameEnvironment & GameEnvironment::operator=(GameEnvironment const & rhs)
         this->snakeLength = rhs.snakeLength;
         this->snakeLocation = rhs.snakeLocation;
         this->snakeDirection = rhs.snakeDirection;
-        /*this->foodLocation = rhs.foodLocation;*/
         for (int i = 0; i < MAP_MAX_FOOD; ++i)
             this->foodLocation[i] = rhs.foodLocation[i];
         this->foodCount = rhs.foodCount;
+        this->paused = rhs.paused;
+        this->supachomp = rhs.supachomp;
+        this->snakeAlive = rhs.snakeAlive;
+        this->gameTime = rhs.gameTime;
+        this->gameFPS = rhs.gameFPS;
+        this->gameSpeed = rhs.gameSpeed;
     }
     return (*this);
 }
@@ -99,38 +92,20 @@ GameEnvironment::~GameEnvironment(void)
     }
 }
 
-/*unsigned int    GameEnvironment::getMapWidth(void) const
-{
-    return (this->mapWidth);
-}
-
-unsigned int    GameEnvironment::getMapHeight(void) const
-{
-    return (this->mapHeight);
-}
-*/
 void            GameEnvironment::changeSnakeDir(t_input action)
 {
     if (this->snakeDirection % 2 != action % 2)
         this->snakeDirection = action;
 }
 
-void            GameEnvironment::increaseGameSpeed(void)
+void            GameEnvironment::setGameSpeed(int amt)
 {
-    if (this->gameFPS < 25)
-    {
-        this->gameFPS++;
-        this->gameSpeed = ((ONE_NANOSEC / this->gameFPS) / 100) * 100;
-    }
-}
-
-void            GameEnvironment::decreaseGameSpeed(void)
-{
-    if (this->gameFPS > 1)
-    {
-        this->gameFPS--;
-        this->gameSpeed = ((ONE_NANOSEC / this->gameFPS) / 100) * 100;
-    }
+    this->gameFPS = amt;
+    if (this->gameFPS > 30)
+        this->gameFPS = 30;
+    if (this->gameFPS < 1)
+        this->gameFPS = 1;
+    this->gameSpeed = ((ONE_NANOSEC / this->gameFPS) / 100) * 100;
 }
 
 void            GameEnvironment::updateMapData(void)
@@ -150,15 +125,48 @@ void            GameEnvironment::updateMapData(void)
     }
     if (!(this->moveToNextBlock()))
         this->gameOver();
-    else if (this->snakeLength % 10 == 0)
-        this->increaseGameSpeed();
+    else
+        switch (this->snakeLength - 4)
+        {
+            case 5:
+                if (this->gameFPS < 4)
+                    this->setGameSpeed(4);
+                break;
+            case 10:
+                if (this->gameFPS < 6)
+                    this->setGameSpeed(6);
+                break;
+            case 20:
+                if (this->gameFPS < 8)
+                    this->setGameSpeed(8);
+                break;
+            case 30:
+                if (this->gameFPS < 10)
+                    this->setGameSpeed(10);
+                break;
+            case 45:
+                if (this->gameFPS < 12)
+                    this->setGameSpeed(12);
+                break;
+            case 60:
+                if (this->gameFPS < 14)
+                    this->setGameSpeed(14);
+                break;
+            case 80:
+                if (this->gameFPS < 16)
+                    this->setGameSpeed(16);
+                break;
+            case 120:
+                if (this->gameFPS < 18)
+                    this->setGameSpeed(18);
+                break;
+        }
 }
 
 unsigned int    GameEnvironment::moveToNextBlock(void)
 {
     unsigned int    x;
     unsigned int    y;
-    /*unsigned int    j, i;*/
 
     x = this->snakeLocation % this->mapWidth - 1;
     y = this->snakeLocation / this->mapWidth;
@@ -178,19 +186,6 @@ unsigned int    GameEnvironment::moveToNextBlock(void)
         this->map[y][x] = MAP_PLAYER;
         this->snakeLocation = (y * this->mapWidth) + (x + 1);
     }
-/*    std::cerr << "1-snakeLocation: " << this->snakeLocation << "  mapWidth: " << this->mapWidth << "  x: " << x << "  y: " << y << std::endl;
-    std::cerr << "\t0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20\n";
-    for (j = 0; j < this->mapHeight; ++j)
-    {
-        i = 0;
-        std::cerr << j << "\t";
-        for (; i < this->mapWidth; ++i)
-        {
-            std::cerr << this->map[j][i] << " ";
-        }
-        std::cerr << "\n";
-    }
-    std::cerr << "\n";*/
     return(1);     
 }
 
@@ -202,17 +197,11 @@ unsigned int    GameEnvironment::checkPlayerCollision(unsigned int x, unsigned i
         return (1);
     else if (this->map[y][x] == MAP_FOOD)
     {
-        // incr length
         this->snakeLength++;
-
-        // eat food
         pos = (y * this->mapWidth) + (x + 1);
         for (i = 0; i < this->foodCount; ++i)
-        {
             if (this->foodLocation[i] == pos)
                 this->foodLocation[i] = 0;
-        }
-        // regen food
         this->generateFood(this->foodCount);
 
     }
@@ -224,14 +213,12 @@ void            GameEnvironment::generateFood(const int amount)
     int rand_pos, x, y;
 
     for (int i = 0; i < amount && i < MAP_MAX_FOOD; ++i)
-    {
         if (this->foodLocation[i] == 0)
         {
             // Get random position
             rand_pos = rand() % (this->mapHeight * this->mapWidth);
             x = (rand_pos % this->mapWidth) - 1;
             y = rand_pos / this->mapWidth;
-
 
             // Check random position
             if (this->map[y][x] != MAP_NONE)
@@ -242,7 +229,6 @@ void            GameEnvironment::generateFood(const int amount)
                 this->map[y][x] = MAP_FOOD;
             }
         }
-    }
 }
 
 void            GameEnvironment::gameOver(void)

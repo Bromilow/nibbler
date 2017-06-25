@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_menu.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 21:48:01 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/16 20:50:39 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/24 15:28:14 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,9 @@
 
 int main_menu(void)
 {
-    initscr();
-	noecho();
-	cbreak();
-	curs_set(0);
-	nodelay(stdscr, true);
-    
     int			choice;
 	int			highlight = 0;
-    int         yMax, xMax, newYMax, newXMax;     // max size of terminal
+    int         yMax, xMax, newYMax, newXMax;
     WINDOW      *menuwin;
     const int   menu_length = 5;
     int         menu_order[menu_length] = {4, 1, 2, 3, 0};
@@ -32,11 +26,16 @@ int main_menu(void)
                                         "three",
                                         "random" };
 
+    initscr();
+	noecho();
+	cbreak();
+	curs_set(0);
+	nodelay(stdscr, true);
+
     // Get terminal size
     getmaxyx(stdscr, yMax, xMax);
 
     // Create menu area
-    // newwin(nlines, ncols, posY, posX);
     menuwin = newwin(MENU_H, MENU_W, (yMax/2) - (MENU_H / 2), (xMax/2) - (MENU_W / 2));
     keypad(menuwin, true);  // Enable keypad
 
@@ -61,7 +60,7 @@ int main_menu(void)
             yMax = newYMax;
         }
 
-        keypad(menuwin, true);  // Enable keypad
+        keypad(menuwin, true);
         wclear(stdscr);
         wclear(menuwin);
 
@@ -73,6 +72,27 @@ int main_menu(void)
             mvwprintw(menuwin, i+1, 1, choices[menu_order[i]].c_str());
             wattroff(menuwin, A_REVERSE);
         }
+
+        if (xMax > 80 && yMax > 14 + menu_length)
+        {
+            mvwprintw(stdscr, 1, (xMax / 2) - 40, "::::    ::: ::::::::::: :::::::::  :::::::::  :::        :::::::::: :::::::::  ");
+            mvwprintw(stdscr, 2, (xMax / 2) - 40, ":+:+:   :+:     :+:     :+:    :+: :+:    :+: :+:        :+:        :+:    :+: ");
+            mvwprintw(stdscr, 3, (xMax / 2) - 40, ":+:+:+  +:+     +:+     +:+    +:+ +:+    +:+ +:+        +:+        +:+    +:+ ");
+            mvwprintw(stdscr, 4, (xMax / 2) - 40, "+#+ +:+ +#+     +#+     +#++:++#+  +#++:++#+  +#+        +#++:++#   +#++:++#:  ");
+            mvwprintw(stdscr, 5, (xMax / 2) - 40, "+#+  +#+#+#     +#+     +#+    +#+ +#+    +#+ +#+        +#+        +#+    +#+ ");
+            mvwprintw(stdscr, 6, (xMax / 2) - 40, "#+#   #+#+#     #+#     #+#    #+# #+#    #+# #+#        #+#        #+#    #+# ");
+            mvwprintw(stdscr, 7, (xMax / 2) - 40, "###    #### ########### #########  #########  ########## ########## ###    ### ");
+        }
+
+/*        
+::::    ::: ::::::::::: :::::::::  :::::::::  :::        :::::::::: :::::::::  
+:+:+:   :+:     :+:     :+:    :+: :+:    :+: :+:        :+:        :+:    :+: 
+:+:+:+  +:+     +:+     +:+    +:+ +:+    +:+ +:+        +:+        +:+    +:+ 
++#+ +:+ +#+     +#+     +#++:++#+  +#++:++#+  +#+        +#++:++#   +#++:++#:  
++#+  +#+#+#     +#+     +#+    +#+ +#+    +#+ +#+        +#+        +#+    +#+ 
+#+#   #+#+#     #+#     #+#    #+# #+#    #+# #+#        #+#        #+#    #+# 
+###    #### ########### #########  #########  ########## ########## ###    ### 
+*/
 
         box(menuwin, 0, 0);
         wrefresh(stdscr);

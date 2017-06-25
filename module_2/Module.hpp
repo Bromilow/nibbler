@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Module.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/09 00:41:59 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/18 21:31:34 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/06/24 13:53:25 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,12 @@ class Module : public IModule
         struct sigaction    _oldSIGWINCH;
         int                 _choice;
 
-        
+        t_input _handleInput(int choice);
+        int     _screenTooSmall(void);
+        void    _resizeWindow(unsigned int newYMax, unsigned int newXmax);
+        int     _gameIsPaused(void);
+        void    _updateInfoWindow(void);
+        void    _updateGameWindow(void);
 };
 
 extern "C" IModule* create_module(GameEnvironment & data);
