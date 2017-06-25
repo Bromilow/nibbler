@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rbromilo <rbromilo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/09 12:43:32 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/25 08:24:52 by rbromilo         ###   ########.fr       */
+/*   Updated: 2017/06/25 16:13:48 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int     checkInput(int ac, char **av)
         << "make run   OR   ./nibbler width height\n" << std::endl;
         return (0);
     }
-    else if (!(std::atoi(av[1]) || std::atoi(av[2])))
+    else if (!(std::atoi(av[1])) || !(std::atoi(av[2])))
     {
         // error : map width and height not valid
         std::cerr << "error : map width and/or height not valid" << std::endl;
