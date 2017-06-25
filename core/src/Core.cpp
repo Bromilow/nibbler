@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Core.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rbromilo <rbromilo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/11 14:25:39 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/25 16:26:28 by rbromilo         ###   ########.fr       */
+/*   Updated: 2017/06/25 16:46:15 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ Core::Core(const unsigned int w, const unsigned int h, const int lib)
 
     newAct.sa_sigaction = &_shutdown;
     newAct.sa_flags = SA_SIGINFO;
+    sigemptyset (&newAct.sa_mask);
     sigaction(SIGINT, &newAct, &this->_oldSIGINT);
     sigaction(SIGQUIT, &newAct, &this->_oldSIGQUIT);
     sigaction(SIGSEGV, &newAct, &this->_oldSIGSEGV);

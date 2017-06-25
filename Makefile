@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rbromilo <rbromilo@student.42.fr>          +#+  +:+       +#+         #
+#    By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/09 03:17:50 by kbam7             #+#    #+#              #
-#    Updated: 2017/06/25 16:26:16 by rbromilo         ###   ########.fr        #
+#    Updated: 2017/06/25 16:45:40 by kbamping         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -84,4 +84,4 @@ run:
 	./$(PROG) 20 20
 
 run_valgrind:
-	valgrind --leak-check=full --show-reachable=yes ./nibbler 20 20
+	valgrind --track-origins=yes --leak-check=full --show-reachable=yes ./nibbler 20 20
