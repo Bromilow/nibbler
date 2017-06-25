@@ -230,8 +230,8 @@ int     Module::_gameIsPaused(void)
 
 void    Module::_updateInfoWindow(void)
 {
-	mvwprintw(this->_infoWindow,1,1, "Time : %d\n", this->gameData.gameTime);
-	mvwprintw(this->_infoWindow,2,1, "your score is %d", this->gameData.snakeLength - 4);
+	mvwprintw(this->_infoWindow,1,1, "Time\t\t: %d\n", this->gameData.gameTime);
+	mvwprintw(this->_infoWindow,2,1, "Score\t\t: %d", this->gameData.snakeLength - 4);
 	mvwprintw(this->_infoWindow, 3, 1, "gameFPS\t: %d", this->gameData.gameFPS);
 }
 

@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/23 17:21:10 by kbamping          #+#    #+#             */
-/*   Updated: 2017/06/25 13:35:13 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/06/25 18:05:36 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,8 +238,8 @@ int     Module::_gameIsPaused(void)
 
 void    Module::_updateInfoWindow(void)
 {
-	mvwprintw(this->_infoWindow,1,1, "Time : %d\n", this->gameData.gameTime);
-	mvwprintw(this->_infoWindow,2,1, "your score is %d", this->gameData.snakeLength - 4);
+	mvwprintw(this->_infoWindow,1,1, "Time\t\t: %d\n", this->gameData.gameTime);
+	mvwprintw(this->_infoWindow,2,1, "Score\t\t: %d", this->gameData.snakeLength - 4);
 	mvwprintw(this->_infoWindow, 3, 1, "gameFPS\t: %d", this->gameData.gameFPS);
 
 	/*
@@ -250,9 +250,9 @@ void    Module::_updateInfoWindow(void)
 
 	for (int a = 0; a != 3; a++)
 	{
-		mvwprintw(this->_infoWindow,1 ,20, "( \\( ) (_  _) (  _ \\ (  _ \\ (  )   ( ___) (  _ \\");
-		mvwprintw(this->_infoWindow,2 ,20, " )  (   _)(_   ) _ <  ) _ <  )(__   )__)   )   /");
-		mvwprintw(this->_infoWindow,3 ,20, "(_)\\_) (____) (____/ (____/ (____) (____) (_)\\_)");
+		mvwprintw(this->_infoWindow,1 ,20, " ( \\( ) (_  _) (  _ \\ (  _ \\ (  )   ( ___) (  _ \\");
+		mvwprintw(this->_infoWindow,2 ,20, "  )  (   _)(_   ) _ <  ) _ <  )(__   )__)   )   /");
+		mvwprintw(this->_infoWindow,3 ,20, " (_)\\_) (____) (____/ (____/ (____) (____) (_)\\_)");
 	}
 }
 
