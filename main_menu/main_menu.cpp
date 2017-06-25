@@ -6,7 +6,7 @@
 /*   By: rbromilo <rbromilo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 21:48:01 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/25 16:26:16 by rbromilo         ###   ########.fr       */
+/*   Updated: 2017/06/25 17:39:24 by rbromilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int main_menu(void)
 	int			highlight = 0;
     int         yMax, xMax, newYMax, newXMax;
     WINDOW      *menuwin;
-    const int   menu_length = 6;
+    const int   menu_length = 5;
     int         menu_order[menu_length] = {4, 1, 2, 3, 0};
 	std::string	choices[menu_length] = {"QUIT",
                                         "one",
@@ -119,6 +119,13 @@ int main_menu(void)
         }
 
         // Check for selection
+        if (choice == 10 && highlight == 0)
+        {
+            delwin(menuwin);
+            endwin();
+            endwin();
+            return (menu_order[(rand() % 5) - 1]);
+        }
         if (choice == 10 && highlight < menu_length && menu_order[highlight] < menu_length){
             delwin(menuwin);
             endwin();

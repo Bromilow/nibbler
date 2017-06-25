@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbromilo <rbromilo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/09 12:43:32 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/25 16:13:48 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/06/25 17:29:57 by rbromilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int     main(int argc, char **argv)
             std::cout << "You chose option : " << menu_choice << std::endl;
             if (menu_choice <= 0)
                 quit = true;
-            else if (menu_choice > 0 && menu_choice < 5)
+            else if (menu_choice > 0 && menu_choice < 4)
             {
                 try {
                     // Set up player, map, and module handler
