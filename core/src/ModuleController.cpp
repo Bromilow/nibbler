@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ModuleController.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbromilo <rbromilo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/11 20:08:54 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/23 19:23:20 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/06/25 13:59:18 by rbromilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@ int     ModuleController::loadLibrary(const char *filename)
     if (this->_destroy_module != NULL)
     {
         this->module = create_module(this->gameData);
+        // if (this->module == NULL)
+        //throw LibraryError();
         return (1);
     }
     return (0);

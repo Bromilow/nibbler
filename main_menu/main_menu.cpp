@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 21:48:01 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/24 15:28:14 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/06/25 15:23:25 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,13 @@ int main_menu(void)
 	int			highlight = 0;
     int         yMax, xMax, newYMax, newXMax;
     WINDOW      *menuwin;
-    const int   menu_length = 5;
-    int         menu_order[menu_length] = {4, 1, 2, 3, 0};
+    const int   menu_length = 6;
+    int         menu_order[menu_length] = {5, 1, 2, 3, 4, 0};
 	std::string	choices[menu_length] = {"QUIT",
                                         "one",
                                         "two",
                                         "three",
+                                        "four",
                                         "random" };
 
     initscr();

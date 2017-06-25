@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+         #
+#    By: rbromilo <rbromilo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/09 03:17:50 by kbam7             #+#    #+#              #
-#    Updated: 2017/06/24 10:02:25 by kbamping         ###   ########.fr        #
+#    Updated: 2017/06/24 22:15:38 by rbromilo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ MOD_MENU	= lib0_MainMenu.so
 MOD1		= lib1_NCurses.so
 MOD2		= lib2_NCurses.so
 MOD3		= lib3_NCurses.so
-
+MOD4		= lib4_SDL.so
 #-- Core Program
 CORE_SRC	= core/src
 SRCS		=	$(CORE_SRC)/main.cpp $(CORE_SRC)/GameEnvironment.cpp $(CORE_SRC)/ModuleController.cpp $(CORE_SRC)/Core.cpp
@@ -34,7 +34,7 @@ CXXFLAGS	= $(WFLAGS) $(INCLUDES)
 .PHONY: clean fclean re run
 
 #-- RULES --#
-all: $(MOD_MENU) $(MOD1) $(MOD2) $(MOD3) $(PROG)
+all: $(MOD_MENU) $(MOD1) $(MOD2) $(MOD3) $(MOD4) $(PROG)
 
 #-- Core Program
 $(CORE_SRC)/%.o : $(CORE_SRC)/%.cpp
@@ -61,6 +61,9 @@ $(MOD2):
 $(MOD3):
 	@$(MAKE) -s -C module_3/
 
+$(MOD4):
+	@$(MAKE) -s -C module_4/
+
 #-- General rules
 clean:
 	@rm -f $(OBJS)
@@ -74,6 +77,7 @@ fclean: clean
 	@$(MAKE) -s -C module_1/ fclean
 	@$(MAKE) -s -C module_2/ fclean
 	@$(MAKE) -s -C module_3/ fclean
+	@$(MAKE) -s -C module_4/ fclean
 
 re: fclean all
 
