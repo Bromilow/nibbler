@@ -6,7 +6,7 @@
 #    By: rbromilo <rbromilo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/09 03:17:50 by kbam7             #+#    #+#              #
-#    Updated: 2017/06/24 19:36:24 by rbromilo         ###   ########.fr        #
+#    Updated: 2017/06/25 10:35:29 by rbromilo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,23 +15,36 @@ LIB			= lib4_SDL.so
 SRCS		= Module.cpp
 OBJS		= $(SRCS:%.cpp=%.o)
 
-INCLUDES	= -I ../core/include
+INCLUDES	= -I ../core/include $(SDL2I)
 CXX			= clang++
 CXXFLAGS	= -Wall -Wextra -Werror -g3 -std=c++11 -fPIC
+LDFLAGS		= $(SDL2L) -shared
 
-if (!(sdl2-config --cflags --clibs))
-{
-	echo "installing brew";
-}
-else
-	echo "brew installed";
+SDL2I_		= $(shell sdl2-config --cflags | cut -d" " -f1 | sed 's/-I//g')
+SDL2L_		= $(shell sdl2-config --libs | cut -d" " -f1 | sed 's/-L//g')
 
-LDFLAGS		= -I../../../../include -L../../../../lib
+SDL2I		= $(shell sdl2-config --cflags)
+SDL2L		= $(shell sdl2-config --libs)
 
-.PHONY: clean fclean re
+INSTALLED	= $(findstring include/SDL2, $(SDL2I_))
+
+.PHONY: all clean fclean re
+
+#/bin/sh: sdl2-config: command not found
+#/nfs/zfs-student-6/users/rbromilo/.brew/include/SDL2
 
 #-- RULES --#
-all: $(LIB)
+all: check $(LIB)
+
+check:
+ifeq ($(INSTALLED),)
+	echo "NOOOPE!!!!!!!!!!"
+	echo "\033[01;36m$(LIB) \t-- \033[00;32minstalling and linking sdl2\033[0m\n"
+	brew install sdl2
+	brew link sdl2
+else
+	echo "YESS!!"
+endif
 
 %.o : %.cpp
 	@$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@

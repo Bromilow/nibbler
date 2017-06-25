@@ -10,56 +10,60 @@ Module::Module(GameEnvironment & data) : gameData(data),  _choice(-1)
 	this->_window_H = 0;
 	this->_window_W = 0;
 
-	SDL_Window *window;
-    SDL_Renderer *renderer;
-
-	// Refresh and clear stdscr
-	clear();
-	refresh();
-
 	// Get max X and Y
-	getmaxyx(stdscr, this->_window_H, this->_window_W);
+	//getmaxyx(stdscr, this->_window_H, this->_window_W);
 
 	this->_padX = 1;
 	this->_padY = 1;
 
 	// Game area
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	{
+        fprintf(stderr, "Could not initialise SDL: %s\n", SDL_GetError());
+        exit(-1);
+    }
 	
-	    this->gameWindow = SDL_CreateWindowAndRenderer(this->_window_H, this->_window_W, SDL_WINDOW_RESIZABLE, &window, &renderer);
-	
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-    SDL_RenderClear(renderer);
-    SDL_RenderPresent(renderer);  //display what has been rendered
+	//this->gameWindow = SDL_CreateWindow(this->_window_H, this->_window_W, SDL_WINDOW_RESIZABLE, &window, &renderer);
+	this->_gameWindow = SDL_CreateWindow("SDL_nibbler", this->_padX, this->_padY, /*TILE_SIZE * this->_window_W*/640, /*TILE_SIZE * this->_window_H*/480, SDL_WINDOW_RESIZABLE);
+	if (this->_gameWindow == NULL) {
+        fprintf(stderr, "Could not create window: %s\n", SDL_GetError());
+        exit(-1);
+    }
+
+    /* We must call SDL_CreateRenderer in order for draw calls to affect this window. */
+    this->_renderer	 = SDL_CreateRenderer(this->_gameWindow, -1, SDL_RENDERER_ACCELERATED);
+	if (this->_renderer == NULL) {
+        fprintf(stderr, "Could not create renderer: %s\n", SDL_GetError());
+        exit(-1);
+    }
+
+	this->_fruit_surface = SDL_LoadBMP("apple.bmp");
+    this->_shead_surface = SDL_LoadBMP("head.bmp");
+    this->_snake_surface = SDL_LoadBMP("snake.bmp");
+    this->_field_surface = SDL_LoadBMP("field.bmp");
+    this->_fruit_texture = SDL_CreateTextureFromSurface(_renderer, this->_fruit_surface);
+    this->_shead_texture = SDL_CreateTextureFromSurface(_renderer, this->_shead_surface);
+    this->_snake_texture = SDL_CreateTextureFromSurface(_renderer, this->_snake_surface);
+    this->_field_texture = SDL_CreateTextureFromSurface(_renderer, this->_field_surface);
+	SDL_FreeSurface(this->_fruit_surface);
+	SDL_FreeSurface(this->_shead_surface);
+	SDL_FreeSurface(this->_snake_surface);
+	SDL_FreeSurface(this->_field_surface);
+
+	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 0);
+    SDL_RenderClear(_renderer);
+    SDL_RenderPresent(_renderer);  //display what has been rendered
 
 	atexit(SDL_Quit);
 
-	SDL_Renderer* renderer = NULL;
-	SDL_Surface*  field_surface = NULL;
-	SDL_Surface*  fruit_surface = NULL;
-	SDL_Surface*  shead_surface = NULL;
-	SDL_Surface*  snake_surface = NULL;
-	SDL_Texture*  field_texture = NULL;
-	SDL_Texture*  fruit_texture = NULL;
-	SDL_Texture*  shead_texture = NULL;
-	SDL_Texture*  snake_texture = NULL;
-
-    fruit_surface = SDL_LoadBMP("apple.bmp");
-    shead_surface = SDL_LoadBMP("head.bmp");
-    snake_surface = SDL_LoadBMP("snake.bmp");
-    field_surface = SDL_LoadBMP("field.bmp");
-    fruit_texture = SDL_CreateTextureFromSurface(renderer, fruit_surface);
-    shead_texture = SDL_CreateTextureFromSurface(renderer, shead_surface);
-    snake_texture = SDL_CreateTextureFromSurface(renderer, snake_surface);
-    field_texture = SDL_CreateTextureFromSurface(renderer, field_surface);
-
-	refresh();
+	SDL_RenderClear(_renderer);
 }
 
 Module::~Module()
 {
-	SDL_DestroyTexture(texture);
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(this->_renderer);
+    SDL_DestroyWindow(this->_gameWindow);
+	SDL_Quit();
 }
 
 Module::Module(const Module & src) : gameData(src.gameData)
@@ -71,235 +75,174 @@ Module & Module::operator=(const Module & rhs)
 {
 	//std::cout << "Module::Assignation Operator" << std::endl; //debug
 	this->_gameWindow = rhs._gameWindow;
+	this->_renderer = rhs._renderer;
 	this->_window_W = rhs._window_W;
 	this->_window_H = rhs._window_H;
 
 	return (*this);
 }
 
-
-
-// Member functions
 t_input		Module::getInput(int accept)
 {
+    SDL_Event		choice;
+	unsigned int	tmp;
 
-	SDL_Event event;
-//	const Uint8 *state = SDL_GetKeyboardState(NULL);                     a different way to check key input
-// 	SDL_PumpEvents();
-
-    if( SDL_Init( SDL_INIT_VIDEO ) < 0){
-        fprintf( stderr, "Could not initialise SDL: %s\n", SDL_GetError() );
-        exit( -1 );
-    }
-
-	if( !SDL_SetVideoMode( 320, 200, 0, 0 ) ){
-        fprintf( stderr, "Could not set video mode: %s\n", SDL_GetError() );
-        SDL_Quit();
-        exit( -1 );
-    }
-
-	SDL_EnableUNICODE( 1 );
-
-	while( SDL_PollEvent( &event ) ){           
-        switch( event.type ){
-            case SDLK_KEYUP:
-				return UP;
-			case SDLK_KEYDOWN:
-				return DOWN;
-            case SDLK_KEYLEFT:
-				return LEFT;
-			case SDLK_KEYRIGHT:
-				return RIGHT;
-			case SDLK_KEYQ:
-				return QUIT;
-			case SDLK_KEYP:
-				return PAUSE;
-			case SDLK_KEY1:
-				return MOD1;
-			case SDLK_KEY2:
-				return MOD2;
-			case SDLK_KEY3:
-				return MOD3;
-
-            case SDLK_QUIT:
-                quit = 1;
-                break;
-
-            default:
-                break;
-        }
-	}
-
-	if (choice != -1 && this->_choice != choice)
-		this->_choice = event;
+	SDL_PollEvent(&choice);
+	if (this->_choice != choice.type)
+		this->_choice = choice.type;
 	if (accept == 1)
 	{
-		choice = this->_choice;
+		tmp = this->_choice;
 		this->_choice = -1;
-		if (this->gameData.paused)
-			switch(event.type)
-			{
-				case 27:
-				case 'q':
-					return QUIT;
-				case 'p':
-					return PAUSE;
-				case '1':
-					return MOD1;
-				case '2':
-					return MOD2;
-				case '3':
-					return MOD3;
-				case KEY_UP:
-				case KEY_DOWN:
-				case KEY_LEFT:
-				case KEY_RIGHT:
-				case ' ':
-				default:
-					return NONE;
-			}
-		switch(choice)
-		{
-			case KEY_UP:
-				return UP;
-			case KEY_DOWN:
-				return DOWN;
-			case KEY_LEFT:
-				return LEFT;
-			case KEY_RIGHT:
-				return RIGHT;
-			case 27:
-			case 'q':
-				return QUIT;
-			case 'p':
-				return PAUSE;
-			case '1':
-				return MOD1;
-			case '2':
-				return MOD2;
-			case '3':
-				return MOD3;
-			case ' ':
-				return SUPACHOMP;
-			default:
-				return NONE;
-		}
+		return (this->_handleInput(tmp));
 	}
 	return (NONE);
 }
 
+t_input		Module::_handleInput(unsigned int choice)
+{
+	if (this->gameData.paused)
+		switch(choice)
+		{
+			case SDLK_ESCAPE:
+			case SDLK_q:
+				return QUIT;
+			case SDLK_p:
+				return PAUSE;
+			case SDLK_1:
+				return MOD1;
+			case SDLK_2:
+				return MOD2;
+			case SDLK_3:
+				return MOD3;
+			case SDLK_UP:
+			case SDLK_DOWN:
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+			case SDLK_SPACE:
+			default:
+				return NONE;
+		}
+	switch(choice)
+	{
+		case SDLK_UP:
+			return UP;
+		case SDLK_DOWN:
+			return DOWN;
+		case SDLK_LEFT:
+			return LEFT;
+		case SDLK_RIGHT:
+			return RIGHT;
+		case SDLK_q:
+			return QUIT;
+		case SDLK_p:
+			return PAUSE;
+		case SDLK_1:
+			return MOD1;
+		case SDLK_2:
+			return MOD2;
+		case SDLK_3:
+			return MOD3;
+		case SDL_QUIT:
+			return QUIT;
+		case SDLK_SPACE:
+			return (SUPACHOMP);
+		default:
+				break;
+	}
+	return NONE;
+}
+
 int		Module::updateDisplay(void)
 {
-	//std::cerr << "Module::updateDisplay()" << std::endl; //debug
-	/*static unsigned int n = 0;*/
-	unsigned int 		x, y, newYMax, newXMax;
-
-	// Get terminal size
-	getmaxyx(stdscr, newYMax, newXMax);
-	if (newXMax <= this->gameData.mapWidth * 2 + 5 || newYMax <= this->gameData.mapHeight * 2 + 10)
-	{
-		wclear(stdscr);
-		wclear(this->_infoWindow);    
-		wclear(this->_gameWindow);
-		mvwprintw(this->_gameWindow, 1, 1, "Terminal too small!");
-		wrefresh(stdscr);
-		wrefresh(this->_infoWindow);
-		wrefresh(this->_gameWindow);
-		return (0);
-	}
-	if (newXMax != this->_terminal_W || newYMax != this->_terminal_H)
-	{
-		// Resize and move infowin
-		wresize(this->_infoWindow, INFO_WIN_H, newXMax);
-		mvwin(this->_infoWindow, 0, 0);
-
-		// Resize and move gamewin
-		wresize(this->_gameWindow, newYMax - INFO_WIN_H, newXMax);
-		mvwin(this->_gameWindow, newYMax - INFO_WIN_H , 0);
-
-		// Update padding
-		//this->_padX = (this->_terminal_W / 2) - (this->gameData.mapWidth + this->gameData.mapWidth / 2); //  (this->_terminal_W / 2) - (this->gameData.mapWidth / 2)
-		//this->_padY = (this->_terminal_H / 2) - (this->gameData.mapHeight);
-
-		// Update dimensions
-		this->_terminal_W = newXMax;
-		this->_terminal_H = newYMax;
-	}
+	// Check game state
 	if (this->gameData.paused)
-	{
-		wclear(stdscr);
-		wclear(this->_infoWindow);    
-		wclear(this->_gameWindow);
-		mvwprintw(this->_gameWindow, this->_terminal_H / 2, this->_terminal_W / 2, "\\;---[ PAUSED ]---;/");
-		wrefresh(stdscr);
-		wrefresh(this->_infoWindow);
-		wrefresh(this->_gameWindow);
-		return(1);
-	}
+		return (this->_gameIsPaused());
 
-	clear(this->_gameWindow);
+	// Prep screen for new output
+	SDL_RenderClear(_renderer);
 
+	// Update game window
+	this->_updateGameWindow();
+
+	return (1);
+}
+
+int     Module::_gameIsPaused(void)
+{
+	SDL_Rect		block;
+
+	SDL_RenderClear(_renderer);
+	block.h = TILE_SIZE;
+	block.w = TILE_SIZE;
+	block.x = SDL_WINDOWPOS_CENTERED;
+	block.y = SDL_WINDOWPOS_CENTERED;
+	SDL_RenderCopy(_renderer, this->_fruit_texture, NULL, &block);
+	SDL_RenderPresent(_renderer);
+	SDL_RenderClear(_renderer);
+	return(1);
+}
+
+void    Module::_updateGameWindow(void)
+{
+	unsigned int	y;
+	unsigned int	x;
+	SDL_Rect		block;
 
 	for (y = 0; y < this->gameData.mapHeight; ++y)	
 	{
 		x = 0;
-		//wmove(this->_gameWindow, y + this->_padY, x + this->_padX);
 		for (; x < this->gameData.mapWidth; ++x)
 		{
+			std::cerr << this->gameData.map[y][x] << " ";
 			switch (this->gameData.map[y][x])
 			{
 				case MAP_NONE:
 					break;
 				case MAP_WALL:
-					SDL_Rect rect;
-   					rect.h = TILE_SIZE;
-  					rect.w = TILE_SIZE;
-  					rect.x = x * TILE_SIZE;
-  					rect.y = y * TILE_SIZE;
-  					SDL_RenderCopy(renderer, field_surface, NULL, &rect);
+   					block.h = TILE_SIZE;
+  					block.w = TILE_SIZE;
+  					block.x = x * TILE_SIZE;
+  					block.y = y * TILE_SIZE;
+  					SDL_RenderCopy(_renderer, this->_field_texture, NULL, &block);
 					break;
 				case MAP_FOOD:
-    				SDL_Rect rect;
-    				rect.h = TILE_SIZE;
-    				rect.w = TILE_SIZE;
-    				rect.x = x * TILE_SIZE;
-    				rect.y = y * TILE_SIZE;
-    				SDL_RenderCopy(renderer, fruit_texture, NULL, &rect);
+    				block.h = TILE_SIZE;
+    				block.w = TILE_SIZE;
+    				block.x = x * TILE_SIZE;
+    				block.y = y * TILE_SIZE;
+    				SDL_RenderCopy(_renderer, this->_fruit_texture, NULL, &block);
 					break;
 				case MAP_PLAYER:
-					SDL_Rect rect;
-   					rect.h = TILE_SIZE;
-  					rect.w = TILE_SIZE;
-  					rect.x = x * TILE_SIZE;
-  					rect.y = y * TILE_SIZE;
-  					SDL_RenderCopy(renderer, shead_texture, NULL, &rect);
+   					block.h = TILE_SIZE;
+  					block.w = TILE_SIZE;
+  					block.x = x * TILE_SIZE;
+  					block.y = y * TILE_SIZE;
+  					SDL_RenderCopy(_renderer, this->_shead_texture, NULL, &block);
 					break;
 			}
 			if (this->gameData.map[y][x] == this->gameData.snakeLength + 9)
 			{
-				SDL_Rect rect;
-    			rect.h = TILE_SIZE;
-    			rect.w = TILE_SIZE;
-    			rect.x = x * TILE_SIZE;
-    			rect.y = y * TILE_SIZE;
-    			SDL_RenderCopy(renderer, snake_surface, NULL, &rect);
+    				block.h = TILE_SIZE;
+    				block.w = TILE_SIZE;
+    				block.x = x * TILE_SIZE;
+    				block.y = y * TILE_SIZE;
+    				SDL_RenderCopy(_renderer, this->_snake_texture, NULL, &block);
 			}
 			else if ((this->gameData.map[y][x] > MAP_PLAYER) &&
 				(this->gameData.map[y][x] < this->gameData.snakeLength + 9))
 			{
-				SDL_Rect rect;
-    			rect.h = TILE_SIZE;
-    			rect.w = TILE_SIZE;
-    			rect.x = x * TILE_SIZE;
-    			rect.y = y * TILE_SIZE;
-    			SDL_RenderCopy(renderer, snake_surface, NULL, &rect);
+    				block.h = TILE_SIZE;
+    				block.w = TILE_SIZE;
+    				block.x = x * TILE_SIZE;
+    				block.y = y * TILE_SIZE;
+    				SDL_RenderCopy(_renderer, this->_snake_texture, NULL, &block);
 			}
 		}
+		std::cerr << std::endl;
 	}
-
-	SDL_RenderPresent(renderer);
-
-	return (1);
+	SDL_RenderPresent(_renderer);
+	SDL_RenderClear(_renderer);
 }
 
 IModule*	create_module(GameEnvironment & data) 
@@ -310,6 +253,4 @@ IModule*	create_module(GameEnvironment & data)
 void		destroy_module(IModule* module)
 {
 	delete module;
-	std::cout << "Module::Class Factory::delete_module()::MODULE DELETED" << std::endl; //debug
-
 }

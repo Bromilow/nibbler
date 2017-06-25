@@ -6,11 +6,7 @@
 /*   By: rbromilo <rbromilo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/11 14:25:39 by kbam7             #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2017/06/24 19:31:48 by rbromilo         ###   ########.fr       */
-=======
-/*   Updated: 2017/06/23 19:18:11 by kbamping         ###   ########.fr       */
->>>>>>> 164cea5d288435d58395309b3bfdf4e27e2a08bb
+/*   Updated: 2017/06/25 08:36:23 by rbromilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +25,7 @@ Core::Core(const unsigned int w, const unsigned int h, const int lib)
     sigaction(SIGSEGV, &newAct, &this->_oldSIGSEGV);
 
     // Setup module paths
-    const char *tmp[N_MODULES] = {"./module_1/lib1_NCurses.so", "./module_2/lib2_NCurses.so", "./module_3/lib3_NCurses.so", "./module/lib4_SDL.so"};
+    const char *tmp[N_MODULES] = {"./module_1/lib1_NCurses.so", "./module_2/lib2_NCurses.so", "./module_3/lib3_NCurses.so", "./module_4/lib4_SDL.so"};
     for (int i = 0; i < N_MODULES; ++i)
         this->modulePaths[i] = tmp[i];
 

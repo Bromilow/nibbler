@@ -27,23 +27,34 @@ class Module : public IModule
         ~Module();
         Module(const Module & src);
         Module & operator=(const Module & rhs);
-        
+
         virtual t_input getInput(int accept);
         virtual int     updateDisplay(void);
 
         GameEnvironment & gameData;
 
     private:
-        WINDOW              *_gameWindow;
-        WINDOW              *_infoWindow;
+
+        SDL_Window          *_gameWindow;
+        SDL_Renderer        *_renderer;
 
         unsigned int        _window_W;
         unsigned int        _window_H;
         unsigned int        _padX;
         unsigned int        _padY;
-        struct sigaction    _oldSIGWINCH;
-        int                 _choice;
+        unsigned int        _choice;
+        SDL_Surface*        _field_surface;
+        SDL_Surface*        _fruit_surface;
+        SDL_Surface*        _shead_surface;
+        SDL_Surface*        _snake_surface;
+        SDL_Texture*        _field_texture;
+        SDL_Texture*        _fruit_texture;
+        SDL_Texture*        _shead_texture;
+        SDL_Texture*        _snake_texture;
 
+        t_input _handleInput(unsigned int choice);
+        int     _gameIsPaused(void);
+        void    _updateGameWindow(void);
         
 };
 
