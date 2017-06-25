@@ -6,7 +6,7 @@
 /*   By: rbromilo <rbromilo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/13 18:39:02 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/25 16:45:24 by rbromilo         ###   ########.fr       */
+/*   Updated: 2017/06/25 17:34:43 by rbromilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ class GameEnvironment {
         t_input         snakeDirection;
         unsigned int    foodLocation[MAP_MAX_FOOD];
         unsigned int    foodCount;
-        unsigned int    obsticalCount;
+        unsigned int    obstacleCount;
         bool            paused;
         bool            supachomp;
         bool            snakeAlive;
@@ -70,7 +70,7 @@ class GameEnvironment {
 
         void            changeSnakeDir(t_input action);
         void            generateFood(const int amount);
-        void            generateObstical(const int amount);
+        void            generateObstacle(const int amount);
         void            setGameSpeed(int amt);
         void            updateMapData(void);
         unsigned int    moveToNextBlock(void);

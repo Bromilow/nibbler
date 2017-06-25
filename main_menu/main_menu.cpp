@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_menu.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbromilo <rbromilo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 21:48:01 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/25 16:37:53 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/06/25 17:39:24 by rbromilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,13 @@ int main_menu(void)
         }
 
         // Check for selection
+        if (choice == 10 && highlight == 0)
+        {
+            delwin(menuwin);
+            endwin();
+            endwin();
+            return (menu_order[(rand() % 5) - 1]);
+        }
         if (choice == 10 && highlight < menu_length && menu_order[highlight] < menu_length){
             delwin(menuwin);
             endwin();
