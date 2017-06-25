@@ -6,7 +6,7 @@
 /*   By: rbromilo <rbromilo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/18 21:30:11 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/25 16:52:36 by rbromilo         ###   ########.fr       */
+/*   Updated: 2017/06/25 16:54:48 by rbromilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,6 +222,10 @@ void            GameEnvironment::generateFood(const int amount)
             x = (rand_pos % this->mapWidth) - 1;
             y = rand_pos / this->mapWidth;
 
+            if (x < 0)
+                x = 0;
+            if (y < 0)
+                y = 0;
             // Check random position
             if (this->map[y][x] != MAP_NONE)
                 --i;
