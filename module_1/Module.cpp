@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/18 21:30:48 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/24 13:46:33 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/06/25 07:49:32 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,7 @@ int		Module::updateDisplay(void)
 	getmaxyx(stdscr, newYMax, newXMax);
 
 	// Check game state
-	if (newXMax <= this->gameData.mapWidth + 5 || newYMax <= this->gameData.mapHeight + 10)
+	if (newXMax <= this->gameData.mapWidth * 2 + 5 || newYMax <= this->gameData.mapHeight + 10)
 		return (this->_screenTooSmall());
 	if (newXMax != this->_terminal_W || newYMax != this->_terminal_H)
 		this->_resizeWindow(newYMax, newXMax);
@@ -193,7 +193,7 @@ int     Module::_screenTooSmall(void)
 	wrefresh(stdscr);
 	wrefresh(this->_infoWindow);
 	wrefresh(this->_gameWindow);
-	return (1);
+	return (0);
 }
 
 void    Module::_resizeWindow(unsigned int newYMax, unsigned int newXMax)
@@ -220,7 +220,7 @@ int     Module::_gameIsPaused(void)
 	wrefresh(stdscr);
 	wrefresh(this->_infoWindow);
 	wrefresh(this->_gameWindow);
-	return(1);
+	return(0);
 }
 
 void    Module::_updateInfoWindow(void)
