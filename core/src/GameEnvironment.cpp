@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/18 21:30:11 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/23 19:18:05 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/06/25 13:30:32 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,22 +98,14 @@ void            GameEnvironment::changeSnakeDir(t_input action)
         this->snakeDirection = action;
 }
 
-void            GameEnvironment::increaseGameSpeed(void)
+void            GameEnvironment::setGameSpeed(int amt)
 {
-    if (this->gameFPS < 25)
-    {
-        this->gameFPS++;
-        this->gameSpeed = ((ONE_NANOSEC / this->gameFPS) / 100) * 100;
-    }
-}
-
-void            GameEnvironment::decreaseGameSpeed(void)
-{
-    if (this->gameFPS > 1)
-    {
-        this->gameFPS--;
-        this->gameSpeed = ((ONE_NANOSEC / this->gameFPS) / 100) * 100;
-    }
+    this->gameFPS = amt;
+    if (this->gameFPS > 30)
+        this->gameFPS = 30;
+    if (this->gameFPS < 1)
+        this->gameFPS = 1;
+    this->gameSpeed = ((ONE_NANOSEC / this->gameFPS) / 100) * 100;
 }
 
 void            GameEnvironment::updateMapData(void)
@@ -133,8 +125,42 @@ void            GameEnvironment::updateMapData(void)
     }
     if (!(this->moveToNextBlock()))
         this->gameOver();
-    else if (this->snakeLength % 10 == 0)
-        this->increaseGameSpeed();
+    else
+        switch (this->snakeLength - 4)
+        {
+            case 5:
+                if (this->gameFPS < 4)
+                    this->setGameSpeed(4);
+                break;
+            case 10:
+                if (this->gameFPS < 6)
+                    this->setGameSpeed(6);
+                break;
+            case 20:
+                if (this->gameFPS < 8)
+                    this->setGameSpeed(8);
+                break;
+            case 30:
+                if (this->gameFPS < 10)
+                    this->setGameSpeed(10);
+                break;
+            case 45:
+                if (this->gameFPS < 12)
+                    this->setGameSpeed(12);
+                break;
+            case 60:
+                if (this->gameFPS < 14)
+                    this->setGameSpeed(14);
+                break;
+            case 80:
+                if (this->gameFPS < 16)
+                    this->setGameSpeed(16);
+                break;
+            case 120:
+                if (this->gameFPS < 18)
+                    this->setGameSpeed(18);
+                break;
+        }
 }
 
 unsigned int    GameEnvironment::moveToNextBlock(void)

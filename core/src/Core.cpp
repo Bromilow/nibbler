@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/11 14:25:39 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/23 19:18:11 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/06/25 13:18:15 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,12 @@ int     Core::handleAction(t_input action)
         case SUPACHOMP:
             // do stuff
             this->gameData->supachomp = true;
+            break;
+        case INCR_SPD:
+            this->gameData->setGameSpeed(this->gameData->gameFPS + 1);
+            break;
+        case DECR_SPD:
+            this->gameData->setGameSpeed(this->gameData->gameFPS - 1);
             break;
         case NONE:
             break;
