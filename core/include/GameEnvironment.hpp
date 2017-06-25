@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   GameEnvironment.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rbromilo <rbromilo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/13 18:39:02 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/25 16:06:09 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/06/25 16:26:16 by rbromilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # define MAX_MAP_H    		68
 # define DEFAULT_GAME_FPS	2
 # define ONE_NANOSEC		1000000000
-# define N_MODULES			4
+# define N_MODULES			3
 # define MAP_NONE           0
 # define MAP_WALL           1
 # define MAP_FOOD           2
