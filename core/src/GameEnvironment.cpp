@@ -6,14 +6,14 @@
 /*   By: rbromilo <rbromilo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/18 21:30:11 by kbam7             #+#    #+#             */
-/*   Updated: 2017/06/25 16:54:48 by rbromilo         ###   ########.fr       */
+/*   Updated: 2017/06/25 17:36:23 by rbromilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GameEnvironment.hpp"
 
 GameEnvironment::GameEnvironment(const unsigned int w, const unsigned int h)
-    : mapWidth(w), mapHeight(h), snakeLength(4), snakeDirection(UP), foodCount(3), obsticalCount(5),
+    : mapWidth(w), mapHeight(h), snakeLength(4), snakeDirection(UP), foodCount(3), obstacleCount(5),
         paused(false), supachomp(false), snakeAlive(true), gameTime(0), gameFPS(DEFAULT_GAME_FPS)
 {
     // Seed rand
@@ -42,7 +42,7 @@ GameEnvironment::GameEnvironment(const unsigned int w, const unsigned int h)
     // Init food
     for (int i = 0; i < MAP_MAX_FOOD; ++i)
         this->foodLocation[i] = 0;
-    this->generateObstical(this->obsticalCount);
+    this->generateObstacle(this->obstacleCount);
     this->generateFood(this->foodCount);
 
 }
@@ -68,6 +68,7 @@ GameEnvironment & GameEnvironment::operator=(GameEnvironment const & rhs)
         for (int i = 0; i < MAP_MAX_FOOD; ++i)
             this->foodLocation[i] = rhs.foodLocation[i];
         this->foodCount = rhs.foodCount;
+        this->obstacleCount = rhs.obstacleCount;
         this->paused = rhs.paused;
         this->supachomp = rhs.supachomp;
         this->snakeAlive = rhs.snakeAlive;
@@ -237,7 +238,7 @@ void            GameEnvironment::generateFood(const int amount)
         }
 }
 
-void            GameEnvironment::generateObstical(const int amount)
+void            GameEnvironment::generateObstacle(const int amount)
 {
     int rand_pos, x, y;
     
