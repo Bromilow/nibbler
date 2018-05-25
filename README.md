@@ -1,6 +1,6 @@
 # Nibbler
 
-Nibbler is the old school snake game. We were tasked to implament the logic with three dynamic graphic libraries.
+Nibbler is the old school snake game. We were tasked to implement the logic with three dynamic graphic libraries.
 
 * Ncurses was implemented in three different ways.
 
